@@ -5,22 +5,18 @@ using System.Collections;
 
 public class PlayerController : MonoBehaviour {
 	public float speed;
-	public Text winText;
-	public Text loseText;
 	public int beamTime = 2;
 	public GameObject beamPrefab; //connected w/ LaserBeam.cs
 	public GameObject beamForPlayer; //connected w/ LaserBeam2.cs
 	public Texture2D t2d; //crosshair stuff
-	public Vector2 mouse; //crosshair stuff
 	public GameObject turretHolder;
 	public Transform turretSpawner;
 	public float turretYOffset; //reminder: y is up
-	public int ammo;
-	public int startingAmmo = 5;
-	public Text ammoText;
 	public AudioSource reloadSound;
 	public AudioSource emptySound;
+	public GameManager gm;
 
+	private Vector2 mouse; //crosshair stuff
 	private Rigidbody rb;
 	private int debugCount;
 	private int w = 128; //crosshair stuff
@@ -28,12 +24,8 @@ public class PlayerController : MonoBehaviour {
 
 	void Start() {
 		rb = GetComponent<Rigidbody> ();
-		winText.text = "";
-		loseText.text = "";
-		ammo = startingAmmo;
-		ammoText.text = "Ammo: " + ammo.ToString ();
 
-		UnityEngine.Cursor.visible = false;
+		Cursor.visible = false;
 		turretHolder.transform.position = transform.position + new Vector3 (0, turretYOffset, 0);
 		StartCoroutine (Timer ());
 
@@ -73,16 +65,17 @@ public class PlayerController : MonoBehaviour {
 		}
 
 		if (Input.GetKeyDown(KeyCode.R)) {
-			ammo = 5;
-			ammoText.text = "Ammo: " + ammo.ToString ();
+			gm.setAmmo("r");
 			reloadSound.Play ();
 		}
 
-		if (ammo == 0) {
-			ammoText.text = "Ammo: RELOAD";
+		if (gm.ammo == 0) {
+			Debug.Log ("in 0 loop");
+			gm.ammoText.text = "Ammo: RELOAD";
 			if (Input.GetButtonDown ("Fire1")) {
 				emptySound.Play ();
 			}
+
 		} else {
 			if (Input.GetButtonDown ("Fire1")) {
 				RaycastHit hit2;
@@ -92,15 +85,13 @@ public class PlayerController : MonoBehaviour {
 				bfp.transform.LookAt (hit2.point); */ //code for shooting from screen
 					GameObject bfp = Instantiate (beamForPlayer);
 					bfp.transform.position = turretSpawner.position;
-					bfp.transform.LookAt (hit2.point);  //code for shooting from screen
-					ammo -= 1;
-					ammoText.text = "Ammo: " + ammo.ToString ();
+					bfp.transform.LookAt (hit2.point); 
+					gm.setAmmo("d");
 				}
 			}
 		}
 
 	}
-
 
 	void FixedUpdate() {
 		float moveHorizontal = Input.GetAxis ("Horizontal");
@@ -108,21 +99,6 @@ public class PlayerController : MonoBehaviour {
 
 		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
 		rb.AddForce (movement * speed);
-
-//		Debug.Log ("This is a test message. Should only happen once.");
-	}
-
-	void OnTriggerEnter (Collider other) {
-		if (other.gameObject.CompareTag ("Pickup")) {
-			//other.gameObject.SetActive (false);
-			Destroy(other.gameObject);
-
-		} else if (other.gameObject.CompareTag ("EnemyLaser")) {
-			Destroy (gameObject);
-			Destroy (other.gameObject);
-			Camera.main.GetComponent<CameraController> ().enabled = false;
-			loseText.text = "Game Over!";
-		}
 	}
 
 	void OnCollisionStay (Collision other) {

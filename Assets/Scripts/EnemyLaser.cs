@@ -1,25 +1,33 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class LaserBeam : MonoBehaviour {
+public class EnemyLaser : MonoBehaviour {
 
 	// Use this for initialization
 	public int speed = 6;
+	public int damage = -10;
 
+	private GameManager gm;
 	private GameObject player;
 
 	void Start () {
-		//Debug.Log (transform.forward);
 		player = GameObject.FindGameObjectWithTag ("Player");
-		//Debug.Log (player.name);
 		transform.LookAt (player.transform);
+		GameObject gmObject = GameObject.FindWithTag ("GameManager");
+		gm = gmObject.GetComponent<GameManager> ();
+
 		Destroy (gameObject, 10);
+	}
+
+	void OnTriggerEnter(Collider other) {
+		Destroy (gameObject);
+		if (other.gameObject.CompareTag("Player")) {
+			gm.changeHealth(damage);
+		}
 	}
 	
 	// Update is called once per frame
 	void Update () {
-		//Debug.Log (transform.forward);
-		//transform.Translate (transform.forward * speed * Time.deltaTime);
 		transform.Translate(transform.forward.normalized * speed * Time.deltaTime , Space.World);
 	}
 }
