@@ -11,7 +11,7 @@ public class GameManager : MonoBehaviour {
 	public int health = 100;
 	public Text healthText;
 	public bool gameisOver; //the purpose of this flag is that so other scripts can see this and stop running when needed
-	public GameObject turret;
+	public GameObject turret; // could replace with an array of GameObjects if needed, C# is way more flexible than C++ with arrays
 
 	// Use this for initialization
 	void Start () {
