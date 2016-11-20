@@ -109,7 +109,7 @@ public class PlayerController : MonoBehaviour {
 
 	void OnGUI() {
 		GUI.DrawTexture(new Rect(mouse.x - (w / 2), mouse.y - (h / 2), w, h), t2d);
-	}
+	} 
 
 	void changeWeapon() {
 		currentTurret = turretList [weaponIndex]; //this line and ones below could be made into a function
