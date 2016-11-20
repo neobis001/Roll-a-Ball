@@ -2,6 +2,11 @@
 using UnityEngine.UI;
 using System.Collections;
 
+//current organization so far
+// GameManager is connected to PlayerController
+// PlayerController is connected to various WeaponScript.cs instances
+
+
 public class GameManager : MonoBehaviour {
 	public Text winText;
 	public Text loseText;
@@ -29,15 +34,11 @@ public class GameManager : MonoBehaviour {
 			gameOver ();
 			gameisOver = true;
 		}
-	}
 
-	public void setAmmo(string flag) {
-		if (flag == "d") {
-			ammo--;
-			ammoText.text = "Ammo: " + ammo.ToString ();	
-		} else if (flag == "r") {
-			ammo = 5;
-			ammoText.text = "Ammo: " + ammo.ToString ();	
+		if (pc.currentWeaponScript.ammo == 0) {
+			ammoText.text = "Ammo: RELOAD";
+		} else {
+			ammoText.text = "Ammo: " + pc.currentWeaponScript.ammo.ToString ();
 		}
 	}
 

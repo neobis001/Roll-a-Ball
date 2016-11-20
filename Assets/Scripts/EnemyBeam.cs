@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class EnemyLaser : MonoBehaviour {
+public class EnemyBeam : MonoBehaviour {
 
 	// Use this for initialization
 	public int speed = 6;
