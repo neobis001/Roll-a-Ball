@@ -18,13 +18,15 @@ public class PlayerController : MonoBehaviour {
 	public GameManager gm;
 	public WeaponScript currentWeaponScript; //this and the other two below were supposed to be private, but made public for GameManager.cs
 	public GameObject currentSpawner;
-	public GameObject currentTurret;
-	public Color originalWeaponC;
+	public GameObject currentTurret; 
+	public Color originalWeaponC; //this and stuff below is for buttons
 	public Color highlightedWeaponC;
 	public Color originalDefenseC;
 	public Color highlightedDefenseC;
 	public Image[] weaponImages;
-	public Image[] defenseImages;
+	public Image[] defenseImages; 
+	public GameObject firePrefab;
+
 
 	private int defenseIndex = 0;
 	private int weaponIndex = 0;
@@ -99,12 +101,12 @@ public class PlayerController : MonoBehaviour {
 			if (Input.GetButtonDown ("Fire1")) {
 				RaycastHit hit2;
 				if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit2)) {
-					/*GameObject bfp = Instantiate (beamForPlayer);
-				bfp.transform.position = Camera.main.transform.position;
-				bfp.transform.LookAt (hit2.point); */ //code for shooting from screen
 					GameObject bfp = Instantiate (beamForPlayer);
 					bfp.transform.position = currentSpawner.transform.position;
-					bfp.transform.LookAt (hit2.point); 
+					bfp.transform.LookAt (hit2.point);
+
+					Instantiate (firePrefab, currentSpawner.transform.position, currentSpawner.transform.rotation);
+
 					currentWeaponScript.setAmmo("d");
 				}
 			}
