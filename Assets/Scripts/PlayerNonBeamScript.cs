@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class AudioClipScript : MonoBehaviour {
+public class PlayerNonBeamScript : MonoBehaviour {
 
 	// Use this for initialization
 	void Start () {

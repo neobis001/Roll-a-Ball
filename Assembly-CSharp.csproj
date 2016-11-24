@@ -46,13 +46,13 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\ExplosionScript.cs" />
-     <Compile Include="Assets\Scripts\AudioClipScript.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
-     <Compile Include="Assets\Scripts\DefaultBeam.cs" />
      <Compile Include="Assets\Scripts\EnemyBeam.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
-     <Compile Include="Assets\Scripts\PlayerController.cs" />
-     <Compile Include="Assets\Scripts\WeaponScript.cs" />
+     <Compile Include="Assets\Scripts\PlayerControllerScript.cs" />
+     <Compile Include="Assets\Scripts\PlayerDefaultBeamScript.cs" />
+     <Compile Include="Assets\Scripts\PlayerNonBeamScript.cs" />
+     <Compile Include="Assets\Scripts\PlayerWeaponScript.cs" />
      <Compile Include="Assets\TurretController.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
