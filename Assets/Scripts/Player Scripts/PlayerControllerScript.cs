@@ -50,7 +50,7 @@ public class PlayerControllerScript: MonoBehaviour {
 			if (Input.GetButtonDown ("Fire1")) {
 				RaycastHit hit2;
 				if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit2)) {
-					currentWeaponScript.fireBeam (hit2.point);
+					currentWeaponScript.fireBeam (hit2);
 				}
 			}
 		}

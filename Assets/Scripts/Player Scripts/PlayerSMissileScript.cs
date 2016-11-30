@@ -5,10 +5,10 @@ public class PlayerSMissileScript : PlayerWeaponScript {
 	public GameObject missileToBeFired;
 	public GameObject firePrefab;
 
-	public override void fireBeam(Vector3 targetLocation) {
+	public override void fireBeam(RaycastHit hit) {
 		GameObject mtbf = (GameObject) Instantiate (missileToBeFired, currentSpawner.transform.position, Quaternion.Euler (-90, 0, 0));
-		mtbf.GetComponent<PlayerMissileScript> ().setHitPoint (targetLocation);
-		Debug.Log ("Firing Beam");
+		PlayerMissileScript pms = mtbf.GetComponent<PlayerMissileScript> ();
+		pms.isEnemyTarget (hit);
 
 		Instantiate (firePrefab, currentSpawner.transform.position, Quaternion.identity);
 

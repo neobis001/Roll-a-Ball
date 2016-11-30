@@ -27,7 +27,7 @@ public class PlayerWeaponScript : MonoBehaviour {
 		}
 	}
 
-	public virtual void fireBeam(Vector3 targetLocation) {
+	public virtual void fireBeam(RaycastHit hit) {
 	
 	}
 
