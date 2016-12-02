@@ -17,7 +17,7 @@ public class PlayerMissileScript : MonoBehaviour {
 		timeMarker = Time.time;
 		Instantiate (fireSound, transform.position, Quaternion.identity);
 		Destroy (gameObject, 10);
-	}
+	} 
 	
 	// Update is called once per frame
 	void Update () {
@@ -33,11 +33,16 @@ public class PlayerMissileScript : MonoBehaviour {
 	}
 
 	void OnTriggerEnter(Collider other) {
-		if (other.gameObject.CompareTag("Enemy")) {
-			Destroy(other.gameObject);
-			Destroy(gameObject);
-		}
-		if (!other.gameObject.CompareTag ("Player")) {
+		if (other.gameObject.CompareTag ("Enemy")) {
+			Destroy (other.gameObject);
+			Destroy (gameObject);
+		} else {
+			string[] checkList = new string[]{"Player", "Scrambler"};
+			foreach (string tag in checkList) {
+				if (other.gameObject.CompareTag (tag)) {
+					return;
+				}
+			}
 			Destroy (gameObject);
 		}
 	}

@@ -15,8 +15,8 @@ public class PlayerControllerScript: MonoBehaviour {
 
 	[Header("--Not for editing--")]
 	public PlayerWeaponScript currentWeaponScript; //this and the other two below were supposed to be private, but made public for GameManager.cs
-	public GameObject currentTurret; 
 
+	private GameObject currentTurret; 
 	private Vector2 mouse; //crosshair stuff
 	private Rigidbody rb;
 	private int debugCount;
