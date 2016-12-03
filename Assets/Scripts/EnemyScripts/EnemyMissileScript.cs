@@ -14,6 +14,7 @@ public class EnemyMissileScript : MonoBehaviour {
 	private float timeMarker;
 	private Vector3 forwardBeforeScramble;
 	private bool isScrambled;
+	private Vector3 ghostLocation; 
 
 	// Use this for initialization
 	void Start () {
@@ -24,6 +25,14 @@ public class EnemyMissileScript : MonoBehaviour {
 		//setting this vector to an impossible to get random vector for comparison later on
 		Instantiate (fireSound, transform.position, Quaternion.identity);
 		Destroy (gameObject, 15);
+		StartCoroutine (ghostTimer ());
+	}
+
+	IEnumerator ghostTimer() {
+		while (true) {
+			yield return new WaitForSeconds (.5f);
+			ghostLocation = player.transform.position;
+		}
 	}
 	
 	// Update is called once per frame
@@ -37,7 +46,11 @@ public class EnemyMissileScript : MonoBehaviour {
 			transform.forward = -forwardBeforeScramble;
 			transform.Translate (transform.forward * speed * Time.deltaTime, Space.World);
 		} else if (player) {
-			transform.LookAt (player.transform.position);
+			Quaternion currentR = transform.rotation;
+			transform.LookAt (ghostLocation);
+			Quaternion targetR = transform.rotation;
+			Quaternion newRotation = Quaternion.Lerp (currentR, targetR, .04f);
+			transform.rotation = newRotation;
 			transform.Translate (transform.forward * speed * Time.deltaTime, Space.World);
 		} else {
 			transform.Translate (transform.forward * speed * Time.deltaTime, Space.World);
