@@ -37,7 +37,7 @@ public class PlayerMissileScript : MonoBehaviour {
 			Destroy (other.gameObject);
 			Destroy (gameObject);
 		} else {
-			string[] checkList = new string[]{"Player", "Scrambler"};
+			string[] checkList = new string[]{"Player", "Scrambler", "Temporary"};
 			foreach (string tag in checkList) {
 				if (other.gameObject.CompareTag (tag)) {
 					return;
@@ -47,6 +47,7 @@ public class PlayerMissileScript : MonoBehaviour {
 		}
 	}
 
+	//when the missile's destroyed, instantiate a destroyPs as an explosion
 	void OnDestroy() {
 		Instantiate (destroyPs, transform.position, Quaternion.identity);
 	}
@@ -55,6 +56,7 @@ public class PlayerMissileScript : MonoBehaviour {
 		hitPoint = hpt;
 	}
 
+	//changes isEnemyTheTarget bool if target is enemy else the missile's just firing at the environment
 	public void isEnemyTarget(RaycastHit hit) {
 		if (hit.transform.gameObject.CompareTag ("Enemy")) {
 			isEnemyTheTarget = true;

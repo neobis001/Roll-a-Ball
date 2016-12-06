@@ -7,14 +7,11 @@ public class EnemyBeam : MonoBehaviour {
 	public int speed = 6;
 	public int damage = -10;
 
-	private GameManager gm;
 	private GameObject player;
 
 	void Start () {
 		player = GameObject.FindGameObjectWithTag ("Player");
 		transform.LookAt (player.transform);
-		GameObject gmObject = GameObject.FindWithTag ("GameManager");
-		gm = gmObject.GetComponent<GameManager> ();
 
 		Destroy (gameObject, 10);
 	}
@@ -22,7 +19,7 @@ public class EnemyBeam : MonoBehaviour {
 	void OnTriggerEnter(Collider other) {
 		Destroy (gameObject);
 		if (other.gameObject.CompareTag("Player")) {
-			gm.changeHealth(damage);
+			other.GetComponent<PlayerControllerScript> ().changeHealth (-damage);
 		}
 	}
 	

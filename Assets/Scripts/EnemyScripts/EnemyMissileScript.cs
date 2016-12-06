@@ -10,7 +10,6 @@ public class EnemyMissileScript : MonoBehaviour {
 	public AudioSource scrambledSound;
 
 	private GameObject player;
-	private GameManager gm;
 	private float timeMarker;
 	private Vector3 forwardBeforeScramble;
 	private bool isScrambled;
@@ -19,10 +18,9 @@ public class EnemyMissileScript : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		player = GameObject.FindGameObjectWithTag ("Player");
-		gm = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameManager> ();
 		timeMarker = Time.time;
-		forwardBeforeScramble = new Vector3 (-100000, -100000, -100000); 
 		//setting this vector to an impossible to get random vector for comparison later on
+		forwardBeforeScramble = new Vector3 (-100000, -100000, -100000); 
 		Instantiate (fireSound, transform.position, Quaternion.identity);
 		Destroy (gameObject, 15);
 		StartCoroutine (ghostTimer ());
@@ -60,12 +58,12 @@ public class EnemyMissileScript : MonoBehaviour {
 	void OnTriggerEnter(Collider other) {
 		if (other.gameObject.CompareTag ("Player")) {
 			Destroy (gameObject);
-			gm.changeHealth (-damage);
+			other.GetComponent<PlayerControllerScript> ().changeHealth (-damage);
 		} else if (other.gameObject.CompareTag("Scrambler")) {
 			isScrambled = true;
 			scrambledSound.Play ();
 		} else {
-			string[] checkList = new string[]{"Enemy", "EnemyMissile"};
+			string[] checkList = new string[]{"Enemy", "EnemyMissile", "Temporary"};
 			foreach (string tag in checkList) {
 				if (other.gameObject.CompareTag (tag)) {
 					return;

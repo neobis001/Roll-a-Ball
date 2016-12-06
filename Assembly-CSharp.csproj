@@ -54,11 +54,13 @@
      <Compile Include="Assets\Scripts\Player Scripts\PlayerBeamScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerCannonScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerControllerScript.cs" />
+     <Compile Include="Assets\Scripts\Player Scripts\PlayerDefenseScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerMissileScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerNonBeamScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerSMissileScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerScramblerScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerWeaponScript.cs" />
+     <Compile Include="Assets\Scripts\UIScript.cs" />
      <Compile Include="Assets\TurretController.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
