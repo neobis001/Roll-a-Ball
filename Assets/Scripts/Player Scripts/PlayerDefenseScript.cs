@@ -12,9 +12,10 @@ public class PlayerDefenseScript : MonoBehaviour {
 		StartCoroutine (Test (runCoroutine));
 	}
 
+	//test function to set defense item inactive after some time
+	//othewise don't need this
 	IEnumerator Test(bool run) {
 		if (run) {
-			Debug.Log ("before yield statement");
 			yield return new WaitForSeconds (3);
 			Debug.Log ("settingInactive");
 			setInactive ();
@@ -27,7 +28,9 @@ public class PlayerDefenseScript : MonoBehaviour {
 		pcs.reactToDefenseInactive (gameObject);
 		gameObject.SetActive (false);
 	}
-		
+
+	//property to access whether an item is considered active or not
+	//making it a property may be extra, but it works, so whatever
 	public bool aFlag {
 		get { return activeFlag;}
 		set { activeFlag = value; }

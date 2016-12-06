@@ -213,7 +213,9 @@ public class PlayerControllerScript: MonoBehaviour {
 		sendHealthAndAmmoData ();
 	}
 
-
+	//bypassCheck is for Start function, when we're sure we don't need a check
+	//if bypassCheck though, checks if there's even items available for switching, else doesn't do anything
+	//creates a list of indices mapping each item to an active status to be passed onto gm and ui
 	public void changeDefense(string cycleDirection, bool bypassCheck = false) {
 		if (!bypassCheck) {
 			int possibleIndex = checkAvailableDefenses(cycleDirection);
@@ -265,25 +267,15 @@ public class PlayerControllerScript: MonoBehaviour {
 		}
 	}
 
-
+	//switches defense item if current item was the one that just got set inactive
+	//if none are available for switching, or if the current item isn't equal to the one that just got set inactive
+	//don't do anything
 	public void reactToDefenseInactive(GameObject comparisonDefense) {
 		if (checkAvailableDefenses ("right") == -1 || comparisonDefense != currentDefense) {
-			Debug.Log ("if statement here worked. The int value for the check was: " + checkAvailableDefenses ("right").ToString ());
 			return;
 		} else {
 			changeDefense ("right");
 		}
-
-
-/*		bool switchSuccessful = false;
-		for (int i = 0; i < defenseList.Length; i++) {
-			GameObject go = defenseList [i];
-			PlayerDefenseScript pds = go.GetComponent<PlayerDefenseScript> ();
-			if (pds.aFlag) {
-				weaponIndex = i;
-				changeDefense ();
-			}
-		} */ 
 	} 
 }
 	
