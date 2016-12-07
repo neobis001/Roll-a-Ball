@@ -41,6 +41,9 @@ public class PlayerScramblerScript : PlayerDefenseScript {
 		//what i find weird is that why didn't it glitch out when the first button was selected?
 		//anyways, I found I could wait til end of frame for this coroutine, should prevent input flag from running for multiple scripts
 		//on the same frame
+		//even odder, if you add currentPds.eflag = true in PlayerControllerScript.cs Line 228, glitch is reversed
+		//first button glitches out, other 2 work fine
+		//until I figure out how to debug, can't really look into this problem :( 
 		yield return new WaitForEndOfFrame ();
 		setInactive ();
 		delay = true;
@@ -53,7 +56,6 @@ public class PlayerScramblerScript : PlayerDefenseScript {
 	void Update () {
 		transform.position = playerPos.position + offset;
 		if (aFlag && !delay && Input.GetMouseButtonDown (1)) {
-			Debug.Log ("click statement ran through");
 			Instantiate (scramblerInstance, transform.position, Quaternion.identity);
 			StartCoroutine (DelayDisable ());
 		}

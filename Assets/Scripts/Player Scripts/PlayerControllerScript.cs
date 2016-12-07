@@ -273,17 +273,14 @@ public class PlayerControllerScript: MonoBehaviour {
 	public void reactToDefenseDisabled(GameObject comparisonDefense) {
 		int resIndex = checkAvailableDefenses ("right");
 		if (resIndex == -1) {
-			//Debug.Log ("if statement 1");
 			string[] indices = new string[defenseList.Length];
 			for (int i = 0; i < defenseList.Length; i++) {
 				indices [i] = "inactiveDisabled";
 			}
 			gm.changeDefenseIcon (indices);
 		} else if (comparisonDefense == currentDefense) {
-			//Debug.Log ("if statement 2");
 			changeDefense (resIndex);
 		} else {
-			//Debug.Log ("if statement 3");
 			string[] indices2 = new string[defenseList.Length];
 			for (int i = 0; i < defenseList.Length; i++) {
 				GameObject go = defenseList [i];

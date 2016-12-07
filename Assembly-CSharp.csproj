@@ -58,6 +58,8 @@
      <Compile Include="Assets\Scripts\Player Scripts\PlayerDefenseScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerMissileScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerNonBeamScript.cs" />
+     <Compile Include="Assets\Scripts\Player Scripts\PlayerRepairKitScript.cs" />
+     <Compile Include="Assets\Scripts\Player Scripts\PlayerRepairScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerSMissileScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerScramblerInstanceScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerScramblerScript.cs" />
