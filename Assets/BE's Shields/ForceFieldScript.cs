@@ -6,7 +6,7 @@ public class ForceFieldScript : MonoBehaviour
 	//Please... put a sphere for goodnessake
 	public GameObject Shield;
 	//reference to the object after instantiated
-	public GameObject instShield;
+	private GameObject instShield;
 
 	[Header ("Shield Properties")]
 	//shield size
@@ -28,38 +28,82 @@ public class ForceFieldScript : MonoBehaviour
 	public float minTransp = 0.1f;
 	public float maxTransp = 0.9f;
 	private float transpDif = 0f;
+	//are shields up?
+	bool shieldsUp = false;
+	float shieldDecay = 0.01f;
 
 
-
-	// Use this for initialization
-	void Awake ()
+	void ShieldsUp ()
 	{
-
-
+		//shields are now up Cap'n
+		shieldsUp = true;
+		//update the current store of shield
 		curShieldDiameter = shieldDiameter;
-
+		//create a shield object
 		Object inst = Instantiate (Shield, transform.position, Quaternion.identity);
-
 		instShield = (GameObject)inst;
-
+		//turn the collider into a trigger
 		instShield.GetComponent<Collider> ().isTrigger = true;
-
+		//make sure the shield is correctly sized
 		instShield.transform.localScale = new Vector3 (shieldDiameter, shieldDiameter, shieldDiameter);
-
-
+		//make child of player
+		instShield.transform.parent = transform;
 		//asthetics
-	
-
 		transpDif = maxTransp - minTransp;
 		diaDif = shieldDiameter - shieldMinDiameter;
-	
+
 	}
-	
+
+
 	// Update is called once per frame
 	void Update ()
 	{
-	
-		instShield.transform.position = transform.position;
+
+		//EnemyRepel ();
+		ProjectileDefence ();
+
+		if (shieldsUp)
+			DecayShield ();
+
+
+
+	}
+
+
+	void ProjectileDefence ()
+	{
+		if (Input.GetKeyDown (KeyCode.H) && !shieldsUp) {
+
+			ShieldsUp ();
+			instShield.GetComponent<ShieldEnter> ().destoryIncoming = true;
+
+		}
+	}
+
+
+	void DecayShield ()
+	{
+		Vector4 temp = instShield.GetComponent<Renderer> ().material.color;
+		temp.w -= shieldDecay * Time.deltaTime;
+		instShield.GetComponent<Renderer> ().material.color = temp;
+
+		if (temp.w <= 0) {
+
+
+			Destroy (instShield);
+			shieldsUp = false;
+
+
+		}
+
+	}
+
+
+
+	void EnemyRepel ()
+	{
+
+		//instShield.transform.position = transform.position;
 
 		Collider[] inbounds = Physics.OverlapSphere (transform.position, shieldDiameter / 2);
 		Transform closestEnemy = null;
@@ -112,4 +156,10 @@ public class ForceFieldScript : MonoBehaviour
 
 
 	}
+
+
+
+
+
+
 }

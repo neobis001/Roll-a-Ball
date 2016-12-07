@@ -9,8 +9,6 @@ public class PlayerController : MonoBehaviour
 {
 	public float speed;
 	public int beamTime = 2;
-	public GameObject beamPrefab;
-	//connected w/ EnemyBeam.cs
 	public GameObject beamForPlayer;
 	//connected w/ DefaultBeam.cs
 	public Texture2D t2d;
