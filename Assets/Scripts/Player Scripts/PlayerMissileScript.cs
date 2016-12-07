@@ -32,12 +32,15 @@ public class PlayerMissileScript : MonoBehaviour {
 		}
 	}
 
+	//if it's the enemy, destroy it and missile
+	//if it's the player or scrambler, don't do anything
+	//else just destroy the missile
 	void OnTriggerEnter(Collider other) {
 		if (other.gameObject.CompareTag ("Enemy")) {
 			Destroy (other.gameObject);
 			Destroy (gameObject);
 		} else {
-			string[] checkList = new string[]{"Player", "Scrambler", "Temporary"};
+			string[] checkList = new string[]{"Player", "Scrambler"};
 			foreach (string tag in checkList) {
 				if (other.gameObject.CompareTag (tag)) {
 					return;

@@ -28,10 +28,13 @@ public class PlayerControllerScript: MonoBehaviour {
 	public float speed;
 	public int health = 100;
 	public GameObject[] turretList;
-	public float turretYOffset; //reminder: y is up
+	//offset turret from top of tank
+	//reminder: y is up
+	public float turretYOffset; 
 	public GameObject[] defenseList;
 	public Vector3 offset;
-	public Texture2D t2d; //crosshair stuff
+	//crosshair stuff
+	public Texture2D t2d;
 
 	private GameManager gm;
 	private Rigidbody rb;
@@ -40,23 +43,41 @@ public class PlayerControllerScript: MonoBehaviour {
 	private int weaponIndex = 0;
 	private PlayerWeaponScript currentWeaponScript; 
 	private GameObject currentDefense;
-	private int defenseIndex = 0;
-	//12/5/16 don't need this line right now, comment it out for now
-//	private PlayerDefenseScript currentDefenseScript;
+	//layermask for player to not react to certain objects like scrambler
+	//private LayerMask lm;
+	//12/6/16 don't need currentDefenseScript right now
+	//private PlayerDefenseScript currentDefenseScript;
 	//3 crosshair variables below
 	private Vector2 mouse; 
 	private int w = 128; 
 	private int h = 128; 
 
+
+	//setup rb, crosshair, GameManager stuff
+	//switch items early
+	//update text early
+	//setup layer mask to default layers w/o Ignore Raycast layer
 	void Start() {
 		rb = GetComponent<Rigidbody> ();
 		Cursor.visible = false;
 		GameObject gmObject = GameObject.FindGameObjectWithTag ("GameManager");
 		gm = gmObject.GetComponent<GameManager>();
 		changeWeapon ();
-		changeDefense ("right", true);
+		changeDefense (0);
 		gm.setAmmoText (currentWeaponScript.ammo.ToString ());
 		gm.setHealthText (health.ToString ());
+
+/*		string[] layerStrings = new string[8];
+		for (int i = 0; i < 8; i++) {
+			//Debug.Log ("Running layer for index: " + i.ToString ());
+			if (i == 2) {
+				continue;
+			} else {
+				layerStrings [i] = LayerMask.LayerToName (i);
+			}
+		}
+		lm = LayerMask.GetMask (layerStrings); */
+
 	}
 		
 	//move crosshair
@@ -82,7 +103,7 @@ public class PlayerControllerScript: MonoBehaviour {
 			if (Input.GetButtonDown ("Fire1")) {
 				RaycastHit hit2;
 				if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit2)) {
-					if (!hit.transform.CompareTag ("Player") && !hit.transform.CompareTag("Temporary")) {
+					if (!hit.transform.CompareTag ("Player") && !hit.transform.CompareTag("Scrambler")) {
 						currentWeaponScript.fireBeam (hit2);
 						//a copy  of "ammo == 0" code is here so that it doesn't need to be run on every update
 						//when the first "ammo == 0" line is passed 
@@ -111,17 +132,11 @@ public class PlayerControllerScript: MonoBehaviour {
 		}
 			
 		if (Input.GetKeyDown (KeyCode.Alpha1)) {
-			/*defenseIndex--;
-			if (defenseIndex < 0) {
-				defenseIndex = defenseList.Length - 1;
-			}*/
-			changeDefense ("left");
+			changeDefense (0);
 		} else if (Input.GetKeyDown (KeyCode.Alpha2)) {
-			/*defenseIndex++;
-			if (defenseIndex == defenseList.Length) {
-				defenseIndex = 0;
-			}*/
-			changeDefense ("right");
+			changeDefense (1);
+		} else if (Input.GetKeyDown (KeyCode.Alpha3)) {
+			changeDefense (2);
 		}
 
 		//put transform code below so stuff is positioned after a changeWeapon for no frame oddities
@@ -161,39 +176,16 @@ public class PlayerControllerScript: MonoBehaviour {
 	}
 
 	//return earliest defenseIndex available to switch too, cycling via cycleDirection
-	//defenseIndex changed here if an index is available
 	//else return -1 to say no indices available
 	int checkAvailableDefenses(string cycleDirection) {
-		int tempIndex = defenseIndex;
-		while (true) {
-			if (cycleDirection == "left") {
-				//Debug.Log ("cycling left");
-				tempIndex--;
-				if (tempIndex < 0) {
-					tempIndex = defenseList.Length - 1;
-				} 
-			} else {
-				//Debug.Log ("cycling right");
-				tempIndex++;
-				if (tempIndex == defenseList.Length) {
-					tempIndex = 0;
-				}
-			}
-				
-
-
-			if (tempIndex == defenseIndex) {
-				return -1;
-			}
-
-			GameObject go = defenseList [tempIndex];
+		for (int i = 0; i < defenseList.Length; i++) {
+			GameObject go = defenseList [i];
 			PlayerDefenseScript pds = go.GetComponent<PlayerDefenseScript> ();
-			if (pds.aFlag) {
-				//defenseIndex = tempIndex;
-				return tempIndex;
+			if (pds.eFlag) {
+				return i;
 			}
-
 		}
+		return -1;
 	}
 
 	//change GameObjects as needed to change a weapon
@@ -213,47 +205,54 @@ public class PlayerControllerScript: MonoBehaviour {
 		sendHealthAndAmmoData ();
 	}
 
-	//bypassCheck is for Start function, when we're sure we don't need a check
-	//if bypassCheck though, checks if there's even items available for switching, else doesn't do anything
+	//check if index has item available to switch too, if not, do nothing
+	//or if object to switch to is already active, don't do anything
+	//bypassCheck avoids same switch check, don't know if I need it 
 	//creates a list of indices mapping each item to an active status to be passed onto gm and ui
-	public void changeDefense(string cycleDirection, bool bypassCheck = false) {
-		if (!bypassCheck) {
-			int possibleIndex = checkAvailableDefenses(cycleDirection);
-			if (possibleIndex == -1) {
+	//active means it's the current object; enabled means whether it's accessible or not
+	public void changeDefense(int index, bool bypassCheck = false) {
+		GameObject go = defenseList [index];
+		PlayerDefenseScript pds = go.GetComponent<PlayerDefenseScript> ();
+		if (!pds.eFlag) {
+			return;
+		} else if (!bypassCheck) {
+			if (go == currentDefense) {
 				return;
-			} else {
-				defenseIndex = possibleIndex;
-			}
+			} 
 		}
 
-		currentDefense = defenseList[defenseIndex];
-		currentDefense.SetActive(true);
+		currentDefense = defenseList[index];
 		currentDefense.transform.position = transform.position + new Vector3 (0, turretYOffset, 0);
-		//12/5/16 don't need this line, just comment it out for now
-		//currentDefenseScript = currentDefense.GetComponent<PlayerDefenseScript> ();
+		PlayerDefenseScript currentPds = currentDefense.GetComponent<PlayerDefenseScript> ();
+		//shouldn't need to set eFlag, that's for the other object's themselves
+		currentPds.aFlag = true;
+
 
 		string[] indices = new string[defenseList.Length];
 		for (int i = 0; i < defenseList.Length; i++) {
-			GameObject go = defenseList [i];
-			PlayerDefenseScript pds = go.GetComponent<PlayerDefenseScript> ();
-			if (go != currentDefense) {
-				if (pds.aFlag) {
+			GameObject go2 = defenseList [i];
+			PlayerDefenseScript pds2 = go2.GetComponent<PlayerDefenseScript> ();
+			if (go2 != currentDefense) {
+				pds2.aFlag = false;
+				if (pds2.eFlag) {
 					indices [i] = "inactiveEnabled";
-					go.SetActive (false);
 				} else {
+					//don't need a SetActive since this implies already set inactive
 					indices [i] = "inactiveDisabled";
 				}
 			} else {
 				indices [i] = "activeEnabled";
 			}
 		}
-/*		foreach (GameObject g in defenseList) {
-			if (g != currentDefense) { 
-				g.SetActive (false);
-			}
-		} */
 
 		gm.changeDefenseIcon (indices);
+/*		string[] pdses = new string[defenseList.Length];
+		for (int i = 0; i < defenseList.Length; i++) {
+			pdses [i] = defenseList [i].GetComponent<PlayerDefenseScript> ().aFlag.ToString();
+		}
+
+		Debug.Log (pdses [0] + pdses [1]+ pdses [2]);*/
+
 	}
 
 	//decrease or increase player's health, then have gm reflect it in the ui
@@ -268,14 +267,82 @@ public class PlayerControllerScript: MonoBehaviour {
 	}
 
 	//switches defense item if current item was the one that just got set inactive
-	//if none are available for switching, or if the current item isn't equal to the one that just got set inactive
-	//don't do anything
-	public void reactToDefenseInactive(GameObject comparisonDefense) {
-		if (checkAvailableDefenses ("right") == -1 || comparisonDefense != currentDefense) {
-			return;
+	//if none are available for switching, make all buttons inactive
+	//if currentDefense was the one that got set inactive, switch to the nearest one to the right
+	//else if it wasn't, then just make sure it's set inactive 
+	public void reactToDefenseDisabled(GameObject comparisonDefense) {
+		int resIndex = checkAvailableDefenses ("right");
+		if (resIndex == -1) {
+			//Debug.Log ("if statement 1");
+			string[] indices = new string[defenseList.Length];
+			for (int i = 0; i < defenseList.Length; i++) {
+				indices [i] = "inactiveDisabled";
+			}
+			gm.changeDefenseIcon (indices);
+		} else if (comparisonDefense == currentDefense) {
+			//Debug.Log ("if statement 2");
+			changeDefense (resIndex);
 		} else {
-			changeDefense ("right");
+			//Debug.Log ("if statement 3");
+			string[] indices2 = new string[defenseList.Length];
+			for (int i = 0; i < defenseList.Length; i++) {
+				GameObject go = defenseList [i];
+				PlayerDefenseScript pds = go.GetComponent<PlayerDefenseScript> ();
+				if (go == comparisonDefense) {
+					indices2 [i] = "inactiveDisabled";
+				} else if (go == currentDefense) {
+					indices2 [i] = "activeEnabled";
+				} else {
+					if (pds.eFlag) {
+						indices2 [i] = "inactiveEnabled";
+					} else {
+						indices2 [i] = "inactiveDisabled";
+					}
+				}
+			}
+			gm.changeDefenseIcon (indices2);
 		}
-	} 
+	}
+
+	//if GameObject is the only one at the time it was made enabled, changeWeapon to it
+	//else just make sure it's set enabled
+	public void reactToDefenseEnabled(GameObject comparisonDefense) {
+		int numEnabled = 0;
+		int comparisonIndex = 0;
+		for (int i = 0; i < defenseList.Length; i++) {
+			GameObject go = defenseList [i];
+			PlayerDefenseScript pds = go.GetComponent<PlayerDefenseScript> ();
+			if (go == comparisonDefense) {
+				numEnabled += 1;
+				comparisonIndex = i;
+			} else if (pds.eFlag) {
+				numEnabled += 1;					
+			}
+		}
+
+		if (numEnabled == 1) {
+			changeDefense (comparisonIndex);
+		} else {
+			string[] indices2 = new string[defenseList.Length];
+			for (int i = 0; i < defenseList.Length; i++) {
+				GameObject go = defenseList [i];
+				PlayerDefenseScript pds = go.GetComponent<PlayerDefenseScript> ();
+				if (go == comparisonDefense) {
+					indices2 [i] = "inactiveEnabled";
+				} else if (go == currentDefense) {
+					indices2 [i] = "activeEnabled";
+				} else {
+					if (pds.eFlag) {
+						indices2 [i] = "inactiveEnabled";
+					} else {
+						indices2 [i] = "inactiveDisabled";
+					}
+				}
+			}
+			gm.changeDefenseIcon (indices2);
+		}
+
+	}
+
 }
 	

@@ -19,3 +19,24 @@ C:\Users\Nicolas\Documents\UnityProjects\Roll-a-Ball Project\Temp\bin\Debug\Unit
 C:\Users\Nicolas\Documents\UnityProjects\Roll-a-Ball Project\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
 C:\Users\Nicolas\Documents\UnityProjects\Roll-a-Ball Project\obj\Debug\Assembly-CSharp.dll
 C:\Users\Nicolas\Documents\UnityProjects\Roll-a-Ball Project\obj\Debug\Assembly-CSharp.pdb
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\Assembly-CSharp.dll
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\Assembly-CSharp.pdb
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\UnityEditor.dll
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\UnityEngine.dll
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\UnityEngine.Networking.dll
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\UnityEngine.UI.dll
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\Mono.Cecil.dll
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\Unity.SerializationLogic.dll
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\Unity.DataContract.dll
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\ICSharpCode.NRefactory.dll
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\Unity.UNetWeaver.dll
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\Unity.CecilTools.dll
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\Mono.Cecil.Pdb.dll
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\Mono.Cecil.Mdb.dll
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\UnityEngine.xml
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\UnityEditor.xml
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\UnityEngine.UI.xml
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\Temp\bin\Debug\UnityEngine.Networking.xml
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\obj\Debug\Assembly-CSharp.csprojResolveAssemblyReference.cache
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\obj\Debug\Assembly-CSharp.dll
+C:\Users\Nicolas\Documents\GitHub\Roll-a-Ball\obj\Debug\Assembly-CSharp.pdb

@@ -50,6 +50,7 @@
      <Compile Include="Assets\Scripts\EnemyScripts\EnemyMissileScript.cs" />
      <Compile Include="Assets\Scripts\EnemyScripts\EnemyScript.cs" />
      <Compile Include="Assets\Scripts\ExplosionScript.cs" />
+     <Compile Include="Assets\Scripts\ExternalScript.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerBeamScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerCannonScript.cs" />
@@ -58,6 +59,7 @@
      <Compile Include="Assets\Scripts\Player Scripts\PlayerMissileScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerNonBeamScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerSMissileScript.cs" />
+     <Compile Include="Assets\Scripts\Player Scripts\PlayerScramblerInstanceScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerScramblerScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerWeaponScript.cs" />
      <Compile Include="Assets\Scripts\UIScript.cs" />

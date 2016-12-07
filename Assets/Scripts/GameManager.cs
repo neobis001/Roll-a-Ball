@@ -18,26 +18,10 @@ using System.Collections;
 
 
 public class GameManager : MonoBehaviour {
-//	public Text winText;
-//	public Text loseText;
-//	public Text ammoText;
-//	public int health = 100;
-//	public Text healthText;
-	public bool gameisOver; //the purpose of this flag is that so other scripts can see this and stop running when needed
-
-//	public GameObject turret; // could replace with an array of GameObjects if needed, C# is way more flexible than C++ with arrays
+	//the purpose of this flag is that so other scripts can see this and stop running when needed
+	public bool gameisOver; 
 	public PlayerControllerScript pc;
 	public UIScript ui;
-
-//	public Color originalWeaponC; //this and stuff below is for buttons
-//	public Color highlightedWeaponC;
-//	public Color originalDefenseC;
-//	public Color highlightedDefenseC;
-//	public Image[] weaponImages;
-//	public Image[] defenseImages; 
-
-//	private int weaponIndex = 0;
-//	private int defenseIndex = 0;
 
 	void Start () {
 		gameisOver = false;

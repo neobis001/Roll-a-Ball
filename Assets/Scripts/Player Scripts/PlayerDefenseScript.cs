@@ -3,30 +3,21 @@ using System.Collections;
 
 public class PlayerDefenseScript : MonoBehaviour {
 	public PlayerControllerScript pcs;
-	public bool runCoroutine = false;
 
 	private bool activeFlag = true;
+	private bool enabledFlag = true;
 
-
-	void Start() {
-		StartCoroutine (Test (runCoroutine));
-	}
-
-	//test function to set defense item inactive after some time
-	//othewise don't need this
-	IEnumerator Test(bool run) {
-		if (run) {
-			yield return new WaitForSeconds (3);
-			Debug.Log ("settingInactive");
-			setInactive ();
-		}
-	}
-
-	//on making this inactive, set the aFlag to false, and cycle right to look for defenses
+	//on making this inactive and disabled, set the aFlag to false, and cycle right to look for defenses
 	protected void setInactive() {
 		aFlag = false;
-		pcs.reactToDefenseInactive (gameObject);
-		gameObject.SetActive (false);
+		eFlag = false;
+		pcs.reactToDefenseDisabled (gameObject);
+	}
+
+	//on making this enabled, let pcs react as needed
+	protected void setEnabled() {
+		eFlag = true;
+		pcs.reactToDefenseEnabled (gameObject);
 	}
 
 	//property to access whether an item is considered active or not
@@ -34,5 +25,11 @@ public class PlayerDefenseScript : MonoBehaviour {
 	public bool aFlag {
 		get { return activeFlag;}
 		set { activeFlag = value; }
+	}
+
+	//property to access whether an active is enabled or not
+	public bool eFlag {
+		get { return enabledFlag;}
+		set { enabledFlag = value; }
 	}
 }
