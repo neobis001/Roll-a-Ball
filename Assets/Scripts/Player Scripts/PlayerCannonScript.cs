@@ -1,14 +1,21 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+//on turn on, set firePrefab script w/ extra damage
+
 public class PlayerCannonScript : PlayerWeaponScript {
 	public GameObject beamToBeFired;
 	public GameObject firePrefab;
+	public int phlebotinumPercentage; //how much to increase damage
 
 	public override void fireBeam(RaycastHit hit) {
 		GameObject bfp = Instantiate (beamToBeFired);
 		bfp.transform.position = currentSpawner.transform.position;
 		bfp.transform.LookAt (hit.point);
+		if (phlebotinum) {
+			PlayerBeamScript pbs = bfp.GetComponent<PlayerBeamScript> ();
+			pbs.givePhlebotinumBoost (phlebotinumPercentage);
+		}
 
 		Instantiate (firePrefab, currentSpawner.transform.position, currentSpawner.transform.rotation);
 

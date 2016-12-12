@@ -2,40 +2,28 @@
 using UnityEngine.UI;
 using System.Collections;
 
-//current organization so far
-// GameManager is connected to PlayerController
-// PlayerController is connected to various WeaponScript.cs instances
-
-//12/4/16
-//make all items all part of a superclass with a function that sets a flag saying whether to disable/enable an item
-//in order to do this, all derived classes should stay active, it should be a private bool and one function
-
-//goals: disabling items
-//when an item is disabled, it should be made possible to reenable it
-//when an item is disabled, the highlighted item should now be the next one on the right
-//if there are no items available, don't do anything. wait til an item is highlighted
-//if multiple items are highlighted at the same time, choose the most left item
-
-
 public class GameManager : MonoBehaviour {
-	//the purpose of this flag is that so other scripts can see this and stop running when needed
-	public bool gameisOver; 
-	public PlayerControllerScript pc;
-	public UIScript ui;
+	public bool autoReloadUpgrade = false;
+	public GameObject[] defenseUpgradeList;
+	public bool gameIsOver; 	//the purpose of this flag is that so other scripts can see this and stop running when needed
+	public PlayerControllerScript pcs; 	//one player
+	public bool phlebotinumUpgrade = false;
+	public UIScript ui; 	//ui on screen
+	public GameObject[] weaponUpgradeList;
+
+	private bool scramblerFlag = false; //for scrambler
 
 	void Start () {
-		gameisOver = false;
+		gameIsOver = false;
 	}
 		
-	//call ui's setHealthText to do ui health code stuff
 	public void setHealthText(string hlth) {
 		ui.setHealthText (hlth);
 	}
-	
-	//manage all the Game Over stuff in general for everything
-	//player game over stuff included here as well
+
+
 	public void gameOver() {
-		GameObject player = pc.gameObject;
+		GameObject player = pcs.gameObject; //include player stuff here
 		Destroy (player);
 		ui.setGameOverText ();
 		Camera.main.GetComponent<CameraController> ().enabled = false;
@@ -44,19 +32,60 @@ public class GameManager : MonoBehaviour {
 	}
 
 	
-	//call ui's changeWeaponIcon to do the actual ui code stuff
+	//messenger
 	public void changeWeaponIcon(int weaponIndex) {	
 		ui.changeWeaponIcon (weaponIndex);
 	}
 	
-	//call ui's changeDefenseIcon to do the actual ui code stuff
+	//messenger
 	public void changeDefenseIcon(string[] defenseIndexList) {
 		ui.changeDefenseIcon(defenseIndexList);
 	}
 	
-	//call ui's setAmmoText to do actual ui ammo stuff
+	//messenger
 	public void setAmmoText(string txt) {
 		ui.setAmmoText (txt);
 	}
+		
+	//the difference between weapons and defenses is that defenses have one more layer of scripts
+	public void populateWeaponUpgrades() {
+		foreach (GameObject i in weaponUpgradeList) {
+			PlayerWeaponScript pws = i.GetComponent<PlayerWeaponScript> ();
+			if (pws.unlocked) {
+				pcs.populateWeapon (i);
+			} else {
+				pws.gameObject.SetActive (false);
+			}
+		}
+		ui.initializeWeaponList (pcs.weaponList.Length);
+	}
+		
+	//planned to be called from player
+	public void populateDefenseUpgrades() {
+		foreach (GameObject i in defenseUpgradeList) {
+			PlayerDefenseScript pds = i.GetComponent<PlayerDefenseScript> ();
+			if (pds.unlocked) {
+				pcs.populateDefense (i);
+			}
+		}
+		ui.initializeDefeneseList (pcs.defenseList.Length);
+	}
 
+	//messenger
+	public void populateDefenseUI(GameObject button) {
+		ui.populateDefenseUI (button);
+	}
+
+	//messenger
+	public void populateWeaponUI(GameObject button) {
+		ui.populateWeaponUI (button);
+	}
+
+
+	//to access scramblerFlag
+	public bool sFlag {
+		get {return scramblerFlag; }
+		set {scramblerFlag = value; }
+	}
+		
 }

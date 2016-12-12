@@ -2,28 +2,22 @@
 using System.Collections;
 
 public class PlayerScramblerScript : PlayerDefenseScript {
-	//offset from scrambler to player
-	public Vector3 offset;
-	//temp. variable for temp. timer
-	public int tempLifetime = 3;
-	//temp. variable to run timer or not
-	public bool runCoroutine;
-	//scrambler to be spawned on right click
-	public GameObject scramblerInstance;
-	//delay before re-enabling
-	public int delayTime = 5;
+	public Vector3 offset; //offset from scrambler to player
+	public int tempLifetime = 3; //temp. variable for temp. timer
+	public bool runCoroutine; //temp. variable to run timer or not
+	public GameObject scramblerInstance; //scrambler to be spawned on right click
+	public int delayTime = 5; //delay before re-enabling
 
-	//player position
 	private Transform playerPos;
-	//for disable code
-	private bool delay = false;
+	private bool delay = false; //for disable code
+	private GameManager gm; //gm
 
-	//start code
 	void Start() {
 		if (runCoroutine) {
 			StartCoroutine (DisableScrambler ());
 		}
 		playerPos = pcs.transform;
+		gm = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameManager> ();
 	}
 
 	//temp. code: disable scrambler after some time
@@ -48,7 +42,8 @@ public class PlayerScramblerScript : PlayerDefenseScript {
 		setInactive ();
 		delay = true;
 		yield return new WaitForSeconds (delayTime);
-		delay = false;
+		delay = false; 	
+		gm.sFlag = false; //at the end, re-disable scrambler flag
 		setEnabled ();
 	}
 
@@ -56,7 +51,8 @@ public class PlayerScramblerScript : PlayerDefenseScript {
 	void Update () {
 		transform.position = playerPos.position + offset;
 		if (aFlag && !delay && Input.GetMouseButtonDown (1)) {
-			Instantiate (scramblerInstance, transform.position, Quaternion.identity);
+			//Instantiate (scramblerInstance, transform.position, Quaternion.identity);
+			gm.sFlag = true;
 			StartCoroutine (DelayDisable ());
 		}
 	}

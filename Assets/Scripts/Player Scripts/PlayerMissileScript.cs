@@ -2,9 +2,11 @@
 using System.Collections;
 
 public class PlayerMissileScript : MonoBehaviour {
+	public int damage = 10;
+	public GameObject fireSound;
 	public int speed = 5;
 	public float upTime = 2;
-	public GameObject fireSound;
+
 	public GameObject destroyPs;
 
 	private float timeMarker;
@@ -32,15 +34,21 @@ public class PlayerMissileScript : MonoBehaviour {
 		}
 	}
 
+	//when the missile's destroyed, instantiate a destroyPs as an explosion
+	void OnDestroy() {
+		Instantiate (destroyPs, transform.position, Quaternion.identity);
+	}
+
 	//if it's the enemy, destroy it and missile
 	//if it's the player or scrambler, don't do anything
 	//else just destroy the missile
 	void OnTriggerEnter(Collider other) {
 		if (other.gameObject.CompareTag ("Enemy")) {
-			Destroy (other.gameObject);
+			EnemyScript es = other.GetComponent<EnemyScript> ();
+			es.changeHealth (-damage);
 			Destroy (gameObject);
 		} else {
-			string[] checkList = new string[]{"Player", "Scrambler"};
+			string[] checkList = new string[]{"Player", "Scrambler", "Missile"}; //avoid destroy on player, scrambler, or duplicate missile
 			foreach (string tag in checkList) {
 				if (other.gameObject.CompareTag (tag)) {
 					return;
@@ -50,13 +58,10 @@ public class PlayerMissileScript : MonoBehaviour {
 		}
 	}
 
-	//when the missile's destroyed, instantiate a destroyPs as an explosion
-	void OnDestroy() {
-		Instantiate (destroyPs, transform.position, Quaternion.identity);
-	}
-
-	public void setHitPoint(Vector3 hpt) {
-		hitPoint = hpt;
+	public void givePhlebotinumBoost(int percentIncrease) {
+		damage = (int) (damage *  (1 + percentIncrease/100f)); //can't do augmented op, need to do explicit cast with this percentage stuff
+		//unlike reload time stuff, need this to keep damage at type int
+		//make sure to include an f for float increase
 	}
 
 	//changes isEnemyTheTarget bool if target is enemy else the missile's just firing at the environment
@@ -68,4 +73,10 @@ public class PlayerMissileScript : MonoBehaviour {
 			hitPoint = hit.point;
 		}
 	}
+
+	public void setHitPoint(Vector3 hpt) {
+		hitPoint = hpt;
+	}
+
+
 }

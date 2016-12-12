@@ -3,6 +3,12 @@ using System.Collections;
 
 public class PlayerDefenseScript : MonoBehaviour {
 	public PlayerControllerScript pcs;
+	//probs don't need this
+	public string id;
+	//whether item is unlocked or not
+	public bool unlocked = false;
+	//button to be activated on Ui if it's true
+	public GameObject button;
 
 	private bool activeFlag = true;
 	private bool enabledFlag = true;
@@ -27,7 +33,7 @@ public class PlayerDefenseScript : MonoBehaviour {
 		set { activeFlag = value; }
 	}
 
-	//property to access whether an active is enabled or not
+	//property to access whether it's enabled or not
 	public bool eFlag {
 		get { return enabledFlag;}
 		set { enabledFlag = value; }
