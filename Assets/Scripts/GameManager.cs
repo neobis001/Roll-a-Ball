@@ -8,6 +8,7 @@ public class GameManager : MonoBehaviour {
 	public bool gameIsOver; 	//the purpose of this flag is that so other scripts can see this and stop running when needed
 	public PlayerControllerScript pcs; 	//one player
 	public bool phlebotinumUpgrade = false;
+	public bool reactiveArmorUpgrade = false;
 	public UIScript ui; 	//ui on screen
 	public GameObject[] weaponUpgradeList;
 
@@ -66,6 +67,9 @@ public class GameManager : MonoBehaviour {
 			PlayerDefenseScript pds = i.GetComponent<PlayerDefenseScript> ();
 			if (pds.unlocked) {
 				pcs.populateDefense (i);
+			} else {
+				pds.aFlag = false; //in the case where the upgrade isn't active, it won't be affected by player on changeWeapon
+				  //so do a manual turn off here
 			}
 		}
 		ui.initializeDefeneseList (pcs.defenseList.Length);

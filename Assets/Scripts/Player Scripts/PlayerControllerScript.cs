@@ -25,6 +25,8 @@ using System.Collections;
 //to do the enable/disable color stuff, we need to do update checks on all the items on every update frame
 
 public class PlayerControllerScript: MonoBehaviour {
+	public int armorDamageDrop = 20; //a percentage
+	public int armorSpeedDrop = 30; //a percentage
 	public int health = 100;
 	public Vector3 offset;
 	public float speed;
@@ -33,6 +35,7 @@ public class PlayerControllerScript: MonoBehaviour {
 	public GameObject[] weaponList;
 	public float weaponYOffset; //reminder: y is up
 
+	private bool reactiveArmor = false; //grabs from gm
 	private GameObject currentDefense;
 	private GameObject currentweapon;
 	private PlayerWeaponScript currentWeaponScript; 
@@ -62,6 +65,10 @@ public class PlayerControllerScript: MonoBehaviour {
 		}
 		if (gm.autoReloadUpgrade) { //same for auto reload
 			turnOnAutoReload ();
+		}
+		if (gm.reactiveArmorUpgrade) {
+			reactiveArmor = true;
+			speed *= (1 - armorSpeedDrop/100f);
 		}
 
 
@@ -207,18 +214,6 @@ public class PlayerControllerScript: MonoBehaviour {
 		}
 	}
 
-
-
-	public void changeHealth(int hlth) {
-		health += hlth; //change health and update ui as needed
-		gm.setHealthText (health.ToString());
-
-		if (health <= 0) {
-			gm.gameOver (); 
-		}
-	}
-
-
 	public void changeDefense(int index, bool bypassCheck = false) {
 		if (!defenseList [index]) { 	//check if index is populated, else do nothing
 			return;
@@ -260,6 +255,21 @@ public class PlayerControllerScript: MonoBehaviour {
 
 
 		gm.changeDefenseIcon (indices);
+	}
+
+	public void changeHealth(int hlth) {
+		float voi = (float)hlth;
+		if (reactiveArmor) {
+			health += (int) ((1 - armorDamageDrop / 100f) * voi);
+		} else {
+			health += (int) voi; //change health and update ui as needed
+		}
+
+		gm.setHealthText (health.ToString());
+
+		if (health <= 0) {
+			gm.gameOver (); 
+		}
 	}
 
 	public void changeWeapon(int index) {
@@ -330,7 +340,7 @@ public class PlayerControllerScript: MonoBehaviour {
 	public void reactToDefenseEnabled(GameObject comparisonDefense) {
 		int numEnabled = 0;
 		int comparisonIndex = 0;
-		for (int i = 0; i < defenseList.Length; i++) {
+		for (int i = 0; i < defenseList.Length; i++) { //check for number of items enabled for use in later if statement
 			GameObject go = defenseList [i];
 			if (!go) {
 				continue;

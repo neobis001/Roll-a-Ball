@@ -1,13 +1,15 @@
 ﻿<Properties StartupItem="Assembly-CSharp.csproj">
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="Unity.Instance.Unity Editor" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\GameManager.cs">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\Player Scripts\PlayerControllerScript.cs">
     <Files>
-      <File FileName="Assets\Scripts\Player Scripts\PlayerWeaponScript.cs" Line="58" Column="2" />
-      <File FileName="Assets\Scripts\Player Scripts\PlayerControllerScript.cs" Line="96" Column="10" />
-      <File FileName="Assets\Scripts\UIScript.cs" Line="113" Column="2" />
-      <File FileName="Assets\Scripts\GameManager.cs" Line="17" Column="8" />
-      <File FileName="Assets\Scripts\Player Scripts\PlayerCannonScript.cs" Line="14" Column="36" />
-      <File FileName="Assets\Scripts\Player Scripts\PlayerMissileScript.cs" Line="51" Column="131" />
+      <File FileName="Assets\Scripts\Player Scripts\PlayerWeaponScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\Player Scripts\PlayerControllerScript.cs" Line="154" Column="34" />
+      <File FileName="Assets\Scripts\UIScript.cs" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\GameManager.cs" Line="11" Column="34" />
+      <File FileName="Assets\Scripts\Player Scripts\PlayerCannonScript.cs" Line="19" Column="3" />
+      <File FileName="Assets\Scripts\ExtraFXScript.cs" Line="16" Column="39" />
+      <File FileName="Assets\Scripts\EnemyScripts\EnemyMissileScript.cs" Line="91" Column="50" />
+      <File FileName="Assets\Scripts\EnemyScripts\EnemyBeam.cs" Line="22" Column="50" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

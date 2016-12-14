@@ -51,7 +51,7 @@ public class PlayerScramblerScript : PlayerDefenseScript {
 	void Update () {
 		transform.position = playerPos.position + offset;
 		if (aFlag && !delay && Input.GetMouseButtonDown (1)) {
-			//Instantiate (scramblerInstance, transform.position, Quaternion.identity);
+			Instantiate (scramblerInstance, transform.position, Quaternion.identity);
 			gm.sFlag = true;
 			StartCoroutine (DelayDisable ());
 		}
