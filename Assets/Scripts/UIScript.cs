@@ -126,7 +126,6 @@ public class UIScript : MonoBehaviour {
 			}
 		}
 	}
-	z
 
 	public void setAmmoText(string txt) {
 		ammoText.text = "Ammo: " + txt;
