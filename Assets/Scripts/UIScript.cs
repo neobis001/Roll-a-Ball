@@ -5,13 +5,15 @@ using UnityEngine.UI;
 public class UIScript : MonoBehaviour {
 	public Text ammoText;
 	public Color disabledDefenseC;
+	public Color disabledJetC;
 	public Color disabledWeaponC;
 	public Text healthText;
 	public Color highlightedDefenseC;
 	public Color highlightedWeaponC;
 	public Text loseText;
-	public Color originalWeaponC;
 	public Color originalDefenseC;
+	public Color originalJetC;
+	public Color originalWeaponC;
 	public Vector2 startingDefenseLocation;
 	public Vector2 startingWeaponLocation;
 	public int defenseOffset;
@@ -20,6 +22,7 @@ public class UIScript : MonoBehaviour {
 
 	private Vector2 currentDefenseLocation; 	//keeps track of location during defense placing
 	private Vector2 currentWeaponLocation;
+	private Image jetImage; //only one needed
 	private Image[] defenseImages; //size is initialized based on one set in SphereTank
 	private Image[] weaponImages;
 
@@ -73,6 +76,14 @@ public class UIScript : MonoBehaviour {
 		}
 	}
 
+	public void changeJetIcon(bool isOn) {
+		if (isOn) { //isOn is for if a new jet pack can be used or not
+			jetImage.color = originalJetC;
+		} else {
+			jetImage.color = disabledJetC;
+		}
+	}
+
 	public void initializeDefeneseList(int length) {
 		defenseImages = new Image[length];
 	}
@@ -96,6 +107,13 @@ public class UIScript : MonoBehaviour {
 		}
 	}
 
+	//unlike weapon and defense, this is only one button, so don't need much more code for this, and it's a bit different
+	public void populateJetUI(GameObject button) {
+		jetImage = button.GetComponent<Image> ();
+		button.SetActive (true);
+		changeJetIcon (true);
+	}
+
 	public void populateWeaponUI(GameObject button) {
 		button.SetActive (true);
 		button.GetComponent<RectTransform> ().anchoredPosition = currentWeaponLocation;
@@ -108,7 +126,7 @@ public class UIScript : MonoBehaviour {
 			}
 		}
 	}
-
+	z
 
 	public void setAmmoText(string txt) {
 		ammoText.text = "Ammo: " + txt;

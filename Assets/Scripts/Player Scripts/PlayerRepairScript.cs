@@ -2,15 +2,11 @@
 using System.Collections;
 
 public class PlayerRepairScript : MonoBehaviour{
-	//scrambler duration
-	public int lifeTime;
-	//for health increase
-	public float percentIncrease;
+	public int lifeTime; //scrambler duration
+	public float percentIncrease; //for health increase
 
-	//for following player transform
-	private GameObject player;
-	//for changing health
-	private PlayerControllerScript pcs;
+	private GameObject player; //for following player transform
+	private PlayerControllerScript pcs; //for changing health
 
 	// Use this for initialization
 	void Start () {

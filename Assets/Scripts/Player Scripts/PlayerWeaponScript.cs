@@ -17,6 +17,7 @@ public class PlayerWeaponScript : MonoBehaviour {
 	protected GameObject currentSpawner;
 	protected bool phlebotinum = false; //make protected so derived classes can check it when instantiating projectiles
 	protected bool canFireAuto = true; //combined with autoDelay bool, derived so overrided fireBeam can access
+	 //this wasn't made for checking reloading status, made isReloading for that
 
 	private bool autoReload = false; //made private unlike phlebotinum, doesn't need derived access
 	private int initialAmmo;
@@ -57,7 +58,7 @@ public class PlayerWeaponScript : MonoBehaviour {
 	}
 
 	public void autoBeam(RaycastHit hit) {
-		if (canFireAuto) {
+		if (canFireAuto && !isReloading) { //canFireAuto is for shot delay, and !isRealoding is reload check
 			StartCoroutine (AutoDelay (hit));
 		}
 	}

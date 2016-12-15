@@ -31,16 +31,19 @@ public class PlayerControllerScript: MonoBehaviour {
 	public Vector3 offset;
 	public float speed;
 	public GameObject[] defenseList;
+	public int movementUpgradeBoost = 200; //a percentage
 	public Texture2D t2d; 	//crosshair stuff
 	public GameObject[] weaponList;
 	public float weaponYOffset; //reminder: y is up
 
 	private bool reactiveArmor = false; //grabs from gm
+	  //it's extra, but that's okay
 	private GameObject currentDefense;
 	private GameObject currentweapon;
 	private PlayerWeaponScript currentWeaponScript; 
 	private GameManager gm;
 	private int h = 128; //crosshair height
+	private PlayerJPHolderScript jPHolder;
 	private Vector2 mouse; 
 	private Rigidbody rb;
 	private int w = 128; //crosshair width
@@ -70,6 +73,15 @@ public class PlayerControllerScript: MonoBehaviour {
 			reactiveArmor = true;
 			speed *= (1 - armorSpeedDrop/100f);
 		}
+		if (gm.moveSupportUpgrade) {
+			speed *= (1 + movementUpgradeBoost / 100f);
+		}
+		if (gm.jetPackUpgrade) {
+			jPHolder = gm.jPScriptHolder.GetComponent<PlayerJPHolderScript>();
+			populateJetUI(); //makes sure button is set active
+			gm.changeJetIcon(true); //putting it here by choice, didn't put it in JPHolderScript.cs
+		}
+
 
 
 		changeWeapon (0); //switch items early
@@ -95,7 +107,7 @@ public class PlayerControllerScript: MonoBehaviour {
 				currentWeaponScript.playEmpty ();
 			}
 		} else {
-			if (currentWeaponScript.aReload) {
+			if (currentWeaponScript.aReload && !currentWeaponScript.Reloading) { //not for reload check, for telling if automatic or not
 				if (Input.GetButton ("Fire1")) {
 					RaycastHit hit2;
 					if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit2)) {
@@ -140,27 +152,32 @@ public class PlayerControllerScript: MonoBehaviour {
 			changeDefense (2);
 		}
 
+		if (Input.GetKeyDown (KeyCode.M)) {
+			jPHolder.startJetPack (); //this checks if can activate too
+		}
+
 		currentweapon.transform.position = transform.position + new Vector3 (0, weaponYOffset, 0); //move currentweapon and currentDefense as needed
 		currentDefense.transform.position = transform.position + offset; //put transform code below so stuff is positioned after a changeWeapon for no frame oddities
 
 	}
 
-	//gets player input and converts it into movement for player rb
 	void FixedUpdate() {
-		float moveHorizontal = Input.GetAxis ("Horizontal");
+		float moveHorizontal = Input.GetAxis ("Horizontal"); //for moving player
 		float moveVertical = Input.GetAxis ("Vertical");
 
 		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
+		//Vector3 movement = new Vector3(1,1,1);
 		rb.AddForce (movement * speed);
 	}
 
+	/*
 	//code for jumping, may remove later on
 	//actually, may not, for jumping stuff
 	void OnCollisionStay (Collision other) {
 		if (Input.GetKeyDown (KeyCode.Space) && other.gameObject.CompareTag("Floor")) {
 			rb.velocity += new Vector3(0,2,0);
 		}
-	}
+	} */
 
 	//draws the crosshair that replaces the mouse on screen
 	void OnGUI() {
@@ -203,6 +220,10 @@ public class PlayerControllerScript: MonoBehaviour {
 				gm.populateDefenseUI (pds.button);
 			}
 		}	
+	}
+
+	void populateJetUI() {
+		gm.populateJetUI (jPHolder.button);
 	}
 
 	void populateWeaponUI() {
@@ -309,7 +330,7 @@ public class PlayerControllerScript: MonoBehaviour {
 			gm.changeDefenseIcon (indices); 
 		} else if (comparisonDefense == currentDefense) { 	//if currentDefense was the one that got set inactive, switch to the nearest one to the right
 			changeDefense (resIndex);
-		} else { 	//else if it wasn't, then just make sure it's set inactiv
+		} else { 	//else if it wasn't, then just make sure it's set inactive
 			string[] indices2 = new string[defenseList.Length];
 			for (int i = 0; i < defenseList.Length; i++) {
 				GameObject go = defenseList [i];
@@ -420,5 +441,8 @@ public class PlayerControllerScript: MonoBehaviour {
 		}
 	}
 
+	public Rigidbody rbProp { //made property so jet pack script can access it
+		get {return rb;}
+	}
 }
 	

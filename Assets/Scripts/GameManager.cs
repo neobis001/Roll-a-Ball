@@ -6,7 +6,10 @@ public class GameManager : MonoBehaviour {
 	public bool autoReloadUpgrade = false;
 	public GameObject[] defenseUpgradeList;
 	public bool gameIsOver; 	//the purpose of this flag is that so other scripts can see this and stop running when needed
+	public GameObject jPScriptHolder;
+	public bool jetPackUpgrade = false;
 	public PlayerControllerScript pcs; 	//one player
+	public bool moveSupportUpgrade = false; //gyroscopic movement upgrade, all in all, increase speed
 	public bool phlebotinumUpgrade = false;
 	public bool reactiveArmorUpgrade = false;
 	public UIScript ui; 	//ui on screen
@@ -18,10 +21,21 @@ public class GameManager : MonoBehaviour {
 		gameIsOver = false;
 	}
 		
-	public void setHealthText(string hlth) {
-		ui.setHealthText (hlth);
+
+	//messenger
+	public void changeDefenseIcon(string[] defenseIndexList) {
+		ui.changeDefenseIcon(defenseIndexList);
 	}
 
+	//messenger
+	public void changeJetIcon(bool isOn) {
+		ui.changeJetIcon (isOn);
+	}
+
+	//messenger
+	public void changeWeaponIcon(int weaponIndex) {	
+		ui.changeWeaponIcon (weaponIndex);
+	}
 
 	public void gameOver() {
 		GameObject player = pcs.gameObject; //include player stuff here
@@ -29,23 +43,7 @@ public class GameManager : MonoBehaviour {
 		ui.setGameOverText ();
 		Camera.main.GetComponent<CameraController> ().enabled = false;
 		Cursor.visible = true;
-		
-	}
 
-	
-	//messenger
-	public void changeWeaponIcon(int weaponIndex) {	
-		ui.changeWeaponIcon (weaponIndex);
-	}
-	
-	//messenger
-	public void changeDefenseIcon(string[] defenseIndexList) {
-		ui.changeDefenseIcon(defenseIndexList);
-	}
-	
-	//messenger
-	public void setAmmoText(string txt) {
-		ui.setAmmoText (txt);
 	}
 		
 	//the difference between weapons and defenses is that defenses have one more layer of scripts
@@ -81,8 +79,22 @@ public class GameManager : MonoBehaviour {
 	}
 
 	//messenger
+	public void populateJetUI(GameObject button) {
+		ui.populateJetUI (button);
+	}
+
+	//messenger
 	public void populateWeaponUI(GameObject button) {
 		ui.populateWeaponUI (button);
+	}
+
+	//messenger
+	public void setAmmoText(string txt) {
+		ui.setAmmoText (txt);
+	}
+
+	public void setHealthText(string hlth) {
+		ui.setHealthText (hlth);
 	}
 
 
