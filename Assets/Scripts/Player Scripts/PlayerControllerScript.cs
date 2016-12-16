@@ -27,30 +27,35 @@ using System.Collections;
 public class PlayerControllerScript: MonoBehaviour {
 	public int armorDamageDrop = 20; //a percentage
 	public int armorSpeedDrop = 30; //a percentage
+	public int cyclopsBoost = 150; //a percentage, for speed increase
 	public int health = 100;
+	public float maxSpeed = 10; //used if cyclopsBoost is checked
+	public float movementBoost = 200; //a percentage, for acc. increase
 	public Vector3 offset;
-	public float speed;
+	public float speed; //used when adding force
 	public GameObject[] defenseList;
-	public int movementUpgradeBoost = 200; //a percentage
-	public Texture2D t2d; 	//crosshair stuff
+	public Texture2D t2d; 	//main crosshair 
+	public Texture2D auto2d; //auto aim crosshair
 	public GameObject[] weaponList;
 	public float weaponYOffset; //reminder: y is up
 
+	private bool aimUpgrade = false; //grabs from gm, this is okay extra
 	private bool reactiveArmor = false; //grabs from gm
 	  //it's extra, but that's okay
 	private GameObject currentDefense;
 	private GameObject currentweapon;
 	private PlayerWeaponScript currentWeaponScript; 
+	public Vector3 autoTarget = new Vector3(-10000, -10000,-10000); //for telling OnGUI whether to draw auto crosshair or not
+	  //making default value this to act like false bool value
 	private GameManager gm;
-	private int h = 128; //crosshair height
+	private int h = 128; //crosshair height, shared with autoaim cursor for now
 	private PlayerJPHolderScript jPHolder;
 	private Vector2 mouse; 
 	private Rigidbody rb;
 	private int w = 128; //crosshair width
 
 	//	private int weaponIndex = 0;
-	//layermask for player to not react to certain objects like scrambler
-	//private LayerMask lm;
+	private LayerMask lm; //layermask specifically for case when want to ignore AutoTrigger layer
 	//12/6/16 don't need currentDefenseScript right now
 	//private PlayerDefenseScript currentDefenseScript;
 
@@ -71,18 +76,28 @@ public class PlayerControllerScript: MonoBehaviour {
 		}
 		if (gm.reactiveArmorUpgrade) {
 			reactiveArmor = true;
-			speed *= (1 - armorSpeedDrop/100f);
+			maxSpeed *= (1 - armorSpeedDrop/100f);
 		}
-		if (gm.moveSupportUpgrade) {
-			speed *= (1 + movementUpgradeBoost / 100f);
+		if (gm.cyclopsUpgrade) {
+			maxSpeed *= (1 + cyclopsBoost / 100f);
+		}
+		if (gm.movementUpgrade) {
+			speed *= (1 + movementBoost / 100f);
 		}
 		if (gm.jetPackUpgrade) {
 			jPHolder = gm.jPScriptHolder.GetComponent<PlayerJPHolderScript>();
 			populateJetUI(); //makes sure button is set active
 			gm.changeJetIcon(true); //putting it here by choice, didn't put it in JPHolderScript.cs
 		}
-
-
+		if (gm.aimUpgrade) {
+			aimUpgrade = true;
+		}
+			
+		string[] layerStrings = new string[8]; //8 for number of default layers, 0-7
+		for (int i = 0; i < 8; i++) {
+			layerStrings[i] = LayerMask.LayerToName(i);
+		}
+		lm = LayerMask.GetMask(layerStrings);
 
 		changeWeapon (0); //switch items early
 		changeDefense (0); 
@@ -95,11 +110,23 @@ public class PlayerControllerScript: MonoBehaviour {
 	void Update ()
 	{
 		mouse = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y); 	//move crosshair
-
-
 		RaycastHit hit; //point weapon as needed
 		if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit)) {  //moved this code below the switch weapon code so that rotate is done on the same frame as the new weapon, not the old one
-			currentweapon.transform.LookAt (hit.point);
+			if (aimUpgrade) {
+				if (hit.transform.CompareTag ("AutoTrigger")) {
+					autoTarget = hit.transform.position; //assumes trigger GameObject is child and in same location as parent
+					Debug.Log(autoTarget);
+					currentweapon.transform.LookAt (autoTarget);
+				} else {
+					autoTarget = new Vector3(-10000, -10000,-10000);
+					currentweapon.transform.LookAt (hit.point);
+				}
+			} else {
+				if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), Mathf.Infinity, lm)) { //if not aimUpgrade
+					  //ignore AutoTrigger stuff when doing raycast, doing another raycast is repetitive, but only idea i have right now
+					currentweapon.transform.LookAt (hit.point);
+				}
+			}
 		}
 			
 		if (currentWeaponScript.ammo == 0) { 	//add fire code
@@ -110,11 +137,17 @@ public class PlayerControllerScript: MonoBehaviour {
 			if (currentWeaponScript.aReload && !currentWeaponScript.Reloading) { //not for reload check, for telling if automatic or not
 				if (Input.GetButton ("Fire1")) {
 					RaycastHit hit2;
-					if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit2)) {
+					if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit2, Mathf.Infinity, lm)) { //with autoTarget if statement below 
+						  //from checking AutoTrigger above, just raycast with lm layermask
 						if (!hit.transform.CompareTag ("Player") && !hit.transform.CompareTag ("Scrambler")) {
-							//Debug.Log ("attempting fire");
-							currentWeaponScript.autoBeam (hit2); //a coroutine in script will handle delay
-							if (currentWeaponScript.ammo == 0) {
+							if (autoTarget != new Vector3 (-10000, -10000, -10000)) { //if autoTarget found a hit from mouse code
+								hit2.point = autoTarget; //autoBeam accepts only Raycasthit, so edit point first
+								  //could theoretically just rewrite autoBeam script, maybe later
+								currentWeaponScript.autoBeam (hit2);
+							} else {
+								currentWeaponScript.autoBeam (hit2); //a coroutine in script will handle delay
+							}
+							if (currentWeaponScript.ammo == 0) { 
 								currentWeaponScript.setAmmo ("r");
 							} else {
 								sendHealthAndAmmoData ();
@@ -125,9 +158,14 @@ public class PlayerControllerScript: MonoBehaviour {
 			} else {
 				if (Input.GetButtonDown ("Fire1") && !currentWeaponScript.Reloading) { //if click and not reloading, then fire
 					RaycastHit hit2;
-					if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit2)) {
+					if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit2, Mathf.Infinity, lm)) { //same comment as similar if statement above
 						if (!hit.transform.CompareTag ("Player") && !hit.transform.CompareTag ("Scrambler")) {
-							currentWeaponScript.fireBeam (hit2); 
+							if (autoTarget != new Vector3 (-10000, -10000, -10000)) {  //if autoTarget found a hit from mouse code
+								hit2.point = autoTarget; //autoBeam accepts only Raycasthit, so edit point first
+								currentWeaponScript.fireBeam(hit2);
+							} else {
+								currentWeaponScript.fireBeam (hit2); //a coroutine in script will handle delay
+							}
 							sendHealthAndAmmoData ();
 						}
 					}
@@ -167,7 +205,20 @@ public class PlayerControllerScript: MonoBehaviour {
 
 		Vector3 movement = new Vector3 (moveHorizontal, 0.0f, moveVertical);
 		//Vector3 movement = new Vector3(1,1,1);
-		rb.AddForce (movement * speed);
+
+		rb.AddForce (movement * speed); //not exactly units accurate, but it works, more speed = more force
+
+		if (rb.velocity.magnitude > maxSpeed) { //if velocity becomes greater than maxSpeed, use the distance formula
+			  //to find a multiplier that'll make the velocity vector such that it's less than the maxSpeed
+			  //make note that multipliers can increase maxSpeed by a lot
+			Vector3 currentVel = rb.velocity;
+			float dampDenom = Mathf.Pow (currentVel.x,2) + Mathf.Pow (currentVel.y,2) + Mathf.Pow (currentVel.z,2);
+			  //wrote this denominator variable as separately because dampMultiplier formula getting big
+			  //don't need a Mathf.Abs since this is always sure to be positive
+			float dampMultiplier = Mathf.Sqrt (Mathf.Pow (maxSpeed, 2) / dampDenom);
+			Vector3 newVel = currentVel * (dampMultiplier);
+			rb.velocity = newVel;
+		}
 	}
 
 	/*
@@ -182,6 +233,16 @@ public class PlayerControllerScript: MonoBehaviour {
 	//draws the crosshair that replaces the mouse on screen
 	void OnGUI() {
 		GUI.DrawTexture(new Rect(mouse.x - (w / 2), mouse.y - (h / 2), w, h), t2d);
+		Debug.Log (mouse.ToString ());
+
+		if (autoTarget != new Vector3(-10000, -10000,-10000)) { 
+			Vector3 drawLocation = Camera.main.WorldToScreenPoint (autoTarget); //not sure if screenpoint designed to be used with DrawTexture 
+			float drawY = Camera.main.pixelHeight - drawLocation.y;
+			  //drawtexture assumes top left is 0,0
+			  //however, WorldToScreenPoint assumes bottom left is 0,0
+			  //to do conversion, do camera height - drawLocation y
+			GUI.DrawTexture (new Rect (drawLocation.x - (w / 2), drawY - (h / 2), w, h), auto2d);
+		}
 	}
 
 	//send ammo status for gm to use with ui

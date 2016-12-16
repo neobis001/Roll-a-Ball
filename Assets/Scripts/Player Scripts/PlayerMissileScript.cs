@@ -9,10 +9,10 @@ public class PlayerMissileScript : MonoBehaviour {
 
 	public GameObject destroyPs;
 
-	private float timeMarker;
-	private bool isEnemyTheTarget = false;
-	private Vector3 hitPoint = new Vector3(0,0,0); //default it to 0 so no null value
 	private GameObject enemy;
+	private Vector3 hitPoint = new Vector3(0,0,0); //default it to 0 so no null value
+	private bool isEnemyTheTarget = false;
+	private float timeMarker;
 
 	// Use this for initialization
 	void Start () {
@@ -48,7 +48,7 @@ public class PlayerMissileScript : MonoBehaviour {
 			es.changeHealth (-damage);
 			Destroy (gameObject);
 		} else {
-			string[] checkList = new string[]{"Player", "Scrambler", "Missile"}; //avoid destroy on player, scrambler, or duplicate missile
+			string[] checkList = new string[]{"Player", "Scrambler", "Missile", "AutoTrigger"}; //avoid destroy on player, scrambler, or duplicate missile
 			foreach (string tag in checkList) {
 				if (other.gameObject.CompareTag (tag)) {
 					return;

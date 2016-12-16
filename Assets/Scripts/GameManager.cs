@@ -3,13 +3,15 @@ using UnityEngine.UI;
 using System.Collections;
 
 public class GameManager : MonoBehaviour {
+	public bool aimUpgrade = false; //for auto aim assist upgrade
 	public bool autoReloadUpgrade = false;
 	public GameObject[] defenseUpgradeList;
 	public bool gameIsOver; 	//the purpose of this flag is that so other scripts can see this and stop running when needed
 	public GameObject jPScriptHolder;
 	public bool jetPackUpgrade = false;
 	public PlayerControllerScript pcs; 	//one player
-	public bool moveSupportUpgrade = false; //gyroscopic movement upgrade, all in all, increase speed
+	public bool cyclopsUpgrade = false; //cyclops motor upgrade, to increase speed
+	public bool movementUpgrade = false; //used for gyroscopic movement upgrade (more acceleration)
 	public bool phlebotinumUpgrade = false;
 	public bool reactiveArmorUpgrade = false;
 	public UIScript ui; 	//ui on screen
