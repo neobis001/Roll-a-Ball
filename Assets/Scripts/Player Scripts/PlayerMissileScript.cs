@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+//OnTriggerEnter list in here
 public class PlayerMissileScript : MonoBehaviour {
 	public int damage = 10;
 	public GameObject fireSound;
@@ -48,7 +49,8 @@ public class PlayerMissileScript : MonoBehaviour {
 			es.changeHealth (-damage);
 			Destroy (gameObject);
 		} else {
-			string[] checkList = new string[]{"Player", "Scrambler", "Missile", "AutoTrigger"}; //avoid destroy on player, scrambler, or duplicate missile
+			string[] checkList = new string[]{"Player", "Scrambler", "PlayerMissile", 
+				"AutoTrigger", "PlayerBeam", "ForceField"}; //avoid destroy on player, scrambler, or duplicate missile
 			foreach (string tag in checkList) {
 				if (other.gameObject.CompareTag (tag)) {
 					return;

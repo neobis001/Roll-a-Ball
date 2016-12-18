@@ -68,7 +68,9 @@ public class GameManager : MonoBehaviour {
 			if (pds.unlocked) {
 				pcs.populateDefense (i);
 			} else {
-				pds.aFlag = false; //in the case where the upgrade isn't active, it won't be affected by player on changeWeapon
+				pds.aFlag = false; //in the case where the upgrade isn't active, it won't be affected by player on changeDefesne
+				  //changeDefense only affects aFlag on item it switches to and nothing else
+				  //it does affect all eFlags though
 				  //so do a manual turn off here
 			}
 		}

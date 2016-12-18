@@ -1,25 +1,36 @@
 ﻿using UnityEngine;
 using System.Collections;
 
+//OnTriggerEnter list in here
 public class EnemyBeam : MonoBehaviour {
 
 	// Use this for initialization
-	public int speed = 6;
 	public int damage = -10;
+	public int speed = 6;
+	public GameObject fieldReflectSound;
 
 	private GameObject player;
 
 	void Start () {
 		player = GameObject.FindGameObjectWithTag ("Player");
 		transform.LookAt (player.transform);
-
-		Destroy (gameObject, 10);
 	}
 
 	void OnTriggerEnter(Collider other) {
-		Destroy (gameObject);
 		if (other.gameObject.CompareTag("Player")) {
 			other.GetComponent<PlayerControllerScript> ().changeHealth (-damage);
+			Destroy (gameObject);
+		} else if (other.gameObject.CompareTag("ForceField")) {
+			Instantiate (fieldReflectSound, transform.position, Quaternion.identity);
+			transform.forward *= -1;
+		} else {
+			string[] checkList = new string[]{"Enemy", "EnemyMissile", "AutoTrigger", "EnemyLaser"};
+			foreach (string tag in checkList) {
+				if (other.gameObject.CompareTag (tag)) {
+					return;
+				}
+			}
+			Destroy (gameObject);
 		}
 	}
 	

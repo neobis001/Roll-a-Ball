@@ -45,10 +45,12 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\PlayerFieldInstanceScript.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\EnemyScripts\EnemyBeam.cs" />
      <Compile Include="Assets\Scripts\EnemyScripts\EnemyMissileScript.cs" />
      <Compile Include="Assets\Scripts\EnemyScripts\EnemyScript.cs" />
+     <Compile Include="Assets\Scripts\EnemyScripts\FieldSoundScript.cs" />
      <Compile Include="Assets\Scripts\ExplosionScript.cs" />
      <Compile Include="Assets\Scripts\ExtraFXScript.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
@@ -57,6 +59,7 @@
      <Compile Include="Assets\Scripts\Player Scripts\PlayerCannonScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerControllerScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerDefenseScript.cs" />
+     <Compile Include="Assets\Scripts\Player Scripts\PlayerFieldScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerJPHolderScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerJetPackScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerMissileScript.cs" />

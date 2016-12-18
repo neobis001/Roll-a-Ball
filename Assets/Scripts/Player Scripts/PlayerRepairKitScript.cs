@@ -2,10 +2,8 @@
 using System.Collections;
 
 public class PlayerRepairKitScript : PlayerDefenseScript {
-	//lifetime in seconds
-	public int delayTime;
-	//to represent repairing visually
-	public GameObject repairPrefab;
+	public int delayTime; 	//lifetime in seconds
+	public GameObject repairPrefab; //to represent repairing visually
 
 	//for coroutine
 	private bool delay = false;
@@ -21,6 +19,7 @@ public class PlayerRepairKitScript : PlayerDefenseScript {
 	
 	// Update is called once per frame
 	void Update () {
+		transform.position = pcs.transform.position; //don't need this, just doing it for consistencey with scrambler
 		if (aFlag && !delay && Input.GetMouseButtonDown (1)) {
 			Instantiate (repairPrefab, pcs.transform.position, Quaternion.identity);
 			StartCoroutine (DelayDisable ());

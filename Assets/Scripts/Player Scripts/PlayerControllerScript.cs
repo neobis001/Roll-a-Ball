@@ -111,11 +111,13 @@ public class PlayerControllerScript: MonoBehaviour {
 	{
 		mouse = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y); 	//move crosshair
 		RaycastHit hit; //point weapon as needed
+
+		//this code checkes where the currentWeapon should point at. it doesn't directly influence the fire location
+		  //it's setting an autoTarget that influences the fire location, otherwise the normal fire location is unaffected
 		if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit)) {  //moved this code below the switch weapon code so that rotate is done on the same frame as the new weapon, not the old one
 			if (aimUpgrade) {
 				if (hit.transform.CompareTag ("AutoTrigger")) {
 					autoTarget = hit.transform.position; //assumes trigger GameObject is child and in same location as parent
-					Debug.Log(autoTarget);
 					currentweapon.transform.LookAt (autoTarget);
 				} else {
 					autoTarget = new Vector3(-10000, -10000,-10000);
@@ -211,12 +213,15 @@ public class PlayerControllerScript: MonoBehaviour {
 		if (rb.velocity.magnitude > maxSpeed) { //if velocity becomes greater than maxSpeed, use the distance formula
 			  //to find a multiplier that'll make the velocity vector such that it's less than the maxSpeed
 			  //make note that multipliers can increase maxSpeed by a lot
-			Vector3 currentVel = rb.velocity;
+/*			Vector3 currentVel = rb.velocity;
 			float dampDenom = Mathf.Pow (currentVel.x,2) + Mathf.Pow (currentVel.y,2) + Mathf.Pow (currentVel.z,2);
 			  //wrote this denominator variable as separately because dampMultiplier formula getting big
 			  //don't need a Mathf.Abs since this is always sure to be positive
 			float dampMultiplier = Mathf.Sqrt (Mathf.Pow (maxSpeed, 2) / dampDenom);
-			Vector3 newVel = currentVel * (dampMultiplier);
+			Vector3 newVel = currentVel * dampMultiplier;
+			float test = maxSpeed / currentVel.magnitude; */
+			float dampMultiplier = maxSpeed / rb.velocity.magnitude; //the formula found above simplifies to maxSpeed/current velocity
+			Vector3 newVel = rb.velocity * dampMultiplier;
 			rb.velocity = newVel;
 		}
 	}
@@ -233,7 +238,6 @@ public class PlayerControllerScript: MonoBehaviour {
 	//draws the crosshair that replaces the mouse on screen
 	void OnGUI() {
 		GUI.DrawTexture(new Rect(mouse.x - (w / 2), mouse.y - (h / 2), w, h), t2d);
-		Debug.Log (mouse.ToString ());
 
 		if (autoTarget != new Vector3(-10000, -10000,-10000)) { 
 			Vector3 drawLocation = Camera.main.WorldToScreenPoint (autoTarget); //not sure if screenpoint designed to be used with DrawTexture 

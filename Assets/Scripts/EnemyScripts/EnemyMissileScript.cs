@@ -93,7 +93,7 @@ public class EnemyMissileScript : MonoBehaviour {
 			isScrambled = true;
 			scrambledSound.Play ();
 		} else {
-			string[] checkList = new string[]{"Enemy", "EnemyMissile", "AutoTrigger"};
+			string[] checkList = new string[]{"Enemy", "EnemyMissile", "AutoTrigger", "EnemyLaser", "ForceField"};
 			foreach (string tag in checkList) {
 				if (other.gameObject.CompareTag (tag)) {
 					return;
