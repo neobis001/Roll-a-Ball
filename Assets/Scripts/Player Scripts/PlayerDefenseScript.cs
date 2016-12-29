@@ -1,12 +1,12 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class PlayerDefenseScript : MonoBehaviour {
+public class PlayerDefenseScript : PlayerItemScript {
 	public PlayerControllerScript pcs;
 	//probs don't need this
-	public string id;
+	//public string id;
 	//whether item is unlocked or not
-	public bool unlocked = false;
+	//public bool unlocked = false;
 	//button to be activated on Ui if it's true
 	public GameObject button;
 

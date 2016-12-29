@@ -1,7 +1,10 @@
 aimUpgrade	False
 autoReloadUpgrade	False
 cyclopsUpgrade	False
+fieldUpgrade	False
 jetPackUpgrade	False
+missileUpgrade	False
 movementUpgrade	False
 phlebotinumUpgrade	False
 reactiveArmorUpgrade	False
+repairUpgrade	False

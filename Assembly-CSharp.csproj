@@ -60,6 +60,7 @@
      <Compile Include="Assets\Scripts\Player Scripts\PlayerControllerScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerDefenseScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerFieldScript.cs" />
+     <Compile Include="Assets\Scripts\Player Scripts\PlayerItemScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerJPHolderScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerJetPackScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerMissileScript.cs" />

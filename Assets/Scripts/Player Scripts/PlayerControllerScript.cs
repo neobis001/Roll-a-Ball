@@ -66,6 +66,7 @@ public class PlayerControllerScript: MonoBehaviour {
 		Cursor.visible = false; //cursor
 		GameObject gmObject = GameObject.FindGameObjectWithTag ("GameManager"); //gm stuff
 		gm = gmObject.GetComponent<GameManager>();
+		gm.editModeItemLoad (); //for edit mode only when not loading save.txt, will get overriden by loadSaveFile if its code is allowed to run
 		gm.loadSaveFile ();
 		Debug.Log ("called loadSaveFile");
 		gm.populateWeaponUpgrades (); //populate items/ui before running code
@@ -144,8 +145,8 @@ public class PlayerControllerScript: MonoBehaviour {
 				currentWeaponScript.playEmpty ();
 			}
 		} else {
-			if (currentWeaponScript.aReload && !currentWeaponScript.Reloading) { //aReload is not for reload check, for telling if automatic or not
-				if (Input.GetButton ("Fire1")) {
+			if (currentWeaponScript.aReload && !currentWeaponScript.Reloading) { //aReload is not for reload check, for telling if auto reload or not
+				if (Input.GetButtonDown ("Fire1")) {
 					//Debug.Log ("in aReload if statement after Fire1 made");
 					RaycastHit hit2;
 					if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit2, Mathf.Infinity, lm)) { //with autoTarget if statement below 
@@ -156,9 +157,9 @@ public class PlayerControllerScript: MonoBehaviour {
 								/*hit2.point = autoTarget; //autoBeam accepts only Raycasthit, so edit point first
 								  //could theoretically just rewrite autoBeam script, maybe later
 								currentWeaponScript.autoBeam (hit2); */
-								currentWeaponScript.autoBeam (hit2, autoTarget); 
+								currentWeaponScript.fireBeam (hit2, autoTarget); 
 							} else {
-								currentWeaponScript.autoBeam (hit2); //a coroutine in script will handle delay
+								currentWeaponScript.fireBeam (hit2); //a coroutine in script will handle delay
 							}
 							if (currentWeaponScript.ammo == 0) { 
 								currentWeaponScript.setAmmo ("r");
@@ -203,7 +204,9 @@ public class PlayerControllerScript: MonoBehaviour {
 		}
 
 		if (Input.GetKeyDown (KeyCode.M)) {
+			if (jPHolder != null) {
 			jPHolder.startJetPack (); //this checks if can activate too
+			}
 		}
 
 		currentweapon.transform.position = transform.position + new Vector3 (0, weaponYOffset, 0); //move currentweapon and currentDefense as needed

@@ -8,13 +8,16 @@ public class GameManager : MonoBehaviour {
 	public bool autoReloadUpgrade = false;
 	public bool cyclopsUpgrade = false; //cyclops motor upgrade, to increase speed
 	public GameObject[] defenseUpgradeList;
+	public bool fieldUpgrade = false;
 	public bool gameIsOver; 	//the purpose of this flag is that so other scripts can see this and stop running when needed
 	public bool jetPackUpgrade = false;
 	public GameObject jPScriptHolder;
+	public bool missileUpgrade = false;
 	public bool movementUpgrade = false; //used for gyroscopic movement upgrade (more acceleration)
 	public bool phlebotinumUpgrade = false;
 	public PlayerControllerScript pcs; 	//one player
 	public bool reactiveArmorUpgrade = false;
+	public bool repairUpgrade = false;
 	public UIScript ui; 	//ui on screen
 	public GameObject[] weaponUpgradeList;
 
@@ -22,6 +25,31 @@ public class GameManager : MonoBehaviour {
 
 	void Start () {
 		gameIsOver = false;
+	}
+
+	PlayerItemScript getItemScript(string upgradeType, string id) {
+		if (upgradeType == "weapon") {
+			foreach (GameObject i in weaponUpgradeList) {
+				PlayerItemScript pis = i.GetComponent<PlayerItemScript> ();
+				if (pis.id == id) {
+					return pis;
+				}
+			}
+		} else {
+			foreach (GameObject i in defenseUpgradeList) {
+				PlayerItemScript pis = i.GetComponent<PlayerItemScript> ();
+				if (pis.id == id) {
+					return pis;
+				}
+			}
+		}
+		return null; //need this else get "not all code paths return value error"
+	}
+
+	string setItemVal(string upgradeType, string id, bool val) {
+		PlayerItemScript pis = getItemScript (upgradeType, id);
+		pis.unlocked = val; 
+		return pis.unlocked.ToString ();
 	}
 		
 
@@ -40,6 +68,16 @@ public class GameManager : MonoBehaviour {
 		ui.changeWeaponIcon (weaponIndex);
 	}
 
+	public void editModeItemLoad() { //for edit mode purposes only
+		bool[] itemBools = new bool[] {fieldUpgrade, missileUpgrade, repairUpgrade};
+		string[] itemIds = new string[] { "field", "missile", "repairKit" };
+		string[] upgradeTypes = new string[] {"defense", "weapon", "defense" };
+		for (int i = 0; i < itemBools.Length; i++) {
+			PlayerItemScript pis = getItemScript (upgradeTypes [i], itemIds [i]);
+			pis.unlocked = itemBools [i];
+		}
+	}
+
 	public void gameOver() { //player is destroyed separately before calling this
 		GameObject[] oList = FindObjectsOfType<GameObject>();
 		foreach (GameObject i in oList) {
@@ -54,7 +92,7 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void loadSaveFile() {
-		return;
+		//return;
 		Debug.Log ("attempting to load save file");
 		if (File.Exists ("save.txt")) {
 			string[] upList = File.ReadAllLines ("save.txt");
@@ -80,8 +118,16 @@ public class GameManager : MonoBehaviour {
 				case "cyclopsUpgrade":
 					cyclopsUpgrade = val;
 					break;
+				case "fieldUpgrade":
+					fieldUpgrade = val;
+					setItemVal ("defense", "field", fieldUpgrade); //string is returned, just didn't use it
+					break;
 				case "jetPackUpgrade":
 					jetPackUpgrade = val;
+					break;
+				case "missileUpgrade":
+					missileUpgrade = val;
+					setItemVal ("weapon", "missile", missileUpgrade);
 					break;
 				case "movementUpgrade":
 					movementUpgrade = val;
@@ -92,11 +138,15 @@ public class GameManager : MonoBehaviour {
 				case "reactiveArmorUpgrade":
 					reactiveArmorUpgrade = val;
 					break;
+				case "repairUpgrade":
+					repairUpgrade = val;
+					setItemVal ("defense", "repairKit", repairUpgrade);
+					break;
 				}
 			}
 		} else { //if file doesn't exist, write to file with default false bool
-			string[] varNameList = new string[] {"aimUpgrade", "autoReloadUpgrade", "cyclopsUpgrade", "jetPackUpgrade", 
-				"movementUpgrade", "phlebotinumUpgrade", "reactiveArmorUpgrade"};
+			string[] varNameList = new string[] {"aimUpgrade", "autoReloadUpgrade", "cyclopsUpgrade", "fieldUpgrade", "jetPackUpgrade", 
+				"missileUpgrade", "movementUpgrade", "phlebotinumUpgrade", "reactiveArmorUpgrade", "repairUpgrade"};
 			foreach (string i in varNameList) {
 				string txt = i; //can't augment directly to i
 				switch (txt) {
@@ -112,9 +162,17 @@ public class GameManager : MonoBehaviour {
 					cyclopsUpgrade = false;
 					txt += "\t" + cyclopsUpgrade.ToString();
 					break;
+				case "fieldUpgrade":
+					fieldUpgrade = false;
+					txt += "\t" + setItemVal ("defense", "field", fieldUpgrade);
+					break;
 				case "jetPackUpgrade":
 					jetPackUpgrade = false;
 					txt += "\t" + jetPackUpgrade.ToString();
+					break;
+				case "missileUpgrade":
+					missileUpgrade = false;
+					txt += "\t" + setItemVal ("weapon", "missile", missileUpgrade);
 					break;
 				case "movementUpgrade":
 					movementUpgrade = false;
@@ -127,6 +185,10 @@ public class GameManager : MonoBehaviour {
 				case "reactiveArmorUpgrade":
 					reactiveArmorUpgrade = false;
 					txt += "\t" + reactiveArmorUpgrade.ToString();
+					break;
+				case "repairUpgrade":
+					repairUpgrade = false;
+					txt += "\t" + setItemVal ("defense", "repairKit", repairUpgrade);
 					break;
 				}
 				File.AppendAllText ("save.txt", txt + "\n");
@@ -158,7 +220,7 @@ public class GameManager : MonoBehaviour {
 				pds.aFlag = false; //in the case where the upgrade isn't active, it won't be affected by player on changeDefesne
 				  //changeDefense only affects aFlag on item it switches to and nothing else
 				  //it does affect all eFlags though
-				  //so do a manual turn off here
+				  //so do a manual turn off here for assurance
 			}
 		}
 		ui.initializeDefeneseList (pcs.defenseList.Length);

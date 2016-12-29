@@ -1,18 +1,17 @@
 ﻿ using UnityEngine;
 using System.Collections;
 
-public class PlayerWeaponScript : MonoBehaviour {
+public class PlayerWeaponScript : PlayerItemScript {
 
 	public int ammo = 5;
+	public float autoDelay; //delay between each shot in auto fire
 	public int autoReloadDecrease; //percentage decrease 
 	public GameObject button;
 	public AudioSource emptySound;
-	public float autoDelay; //delay between each shot in auto fire
 	public int magazineDecrease; //a percentage
 	public int phlebotinumReloadDecrease; //percentage decrease in time reload
 	public AudioSource reloadSound;
 	public float reloadTime; //float so can do a decimal percentage decrease
-	public bool unlocked;
 
 	protected GameObject currentSpawner;
 	protected bool phlebotinum = false; //make protected so derived classes can check it when instantiating projectiles
@@ -47,7 +46,9 @@ public class PlayerWeaponScript : MonoBehaviour {
 		ammo = initialAmmo;
 		gm.setAmmoText (ammo.ToString ());
 	}
-		
+
+
+/*
 	protected IEnumerator AutoDelay(RaycastHit hit, GameObject autoedEnemy = null) {
 		fireBeam (hit, autoedEnemy); //trying a wait for end of frame may start coroutine twice, causing 0 ammo problem while text still at one
 		  //just remove it
@@ -61,7 +62,7 @@ public class PlayerWeaponScript : MonoBehaviour {
 		if (canFireAuto && !isReloading) { //canFireAuto is for shot delay, and !isRealoding is reload check
 			StartCoroutine (AutoDelay (hit, autoedEnemy));
 		}
-	}
+	} */
 
 
 	public virtual void fireBeam(RaycastHit hit, GameObject autoedEnemy = null) { 
