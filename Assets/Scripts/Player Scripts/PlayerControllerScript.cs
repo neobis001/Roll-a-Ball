@@ -36,7 +36,7 @@ public class PlayerControllerScript: MonoBehaviour {
 	public GameObject[] defenseList;
 	public Texture2D t2d; 	//main crosshair 
 	public Texture2D auto2d; //auto aim crosshair
-	public GameObject[] weaponList;
+	public GameObject[] weaponList; 
 	public float weaponYOffset; //reminder: y is up
 
 	private bool aimUpgrade = false; //grabs from gm, this is okay extra
@@ -45,8 +45,10 @@ public class PlayerControllerScript: MonoBehaviour {
 	private GameObject currentDefense;
 	private GameObject currentweapon;
 	private PlayerWeaponScript currentWeaponScript; 
-	public Vector3 autoTarget = new Vector3(-10000, -10000,-10000); //for telling OnGUI whether to draw auto crosshair or not
-	  //making default value this to act like false bool value
+/*	public Vector3 autoTarget = new Vector3(-10000, -10000,-10000); //for telling OnGUI whether to draw auto crosshair or not
+	  //making default value this to act like false bool value */
+	public GameObject autoTarget = null; //for telling OnGUI whether to draw auto crosshair or not
+	  //needs to be GameObject to change hit2 GameObject to enemy GameObject instead of default point
 	private GameManager gm;
 	private int h = 128; //crosshair height, shared with autoaim cursor for now
 	private PlayerJPHolderScript jPHolder;
@@ -117,10 +119,10 @@ public class PlayerControllerScript: MonoBehaviour {
 		if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit)) {  //moved this code below the switch weapon code so that rotate is done on the same frame as the new weapon, not the old one
 			if (aimUpgrade) {
 				if (hit.transform.CompareTag ("AutoTrigger")) {
-					autoTarget = hit.transform.position; //assumes trigger GameObject is child and in same location as parent
-					currentweapon.transform.LookAt (autoTarget);
+					autoTarget = hit.transform.GetComponentInParent<Transform> ().gameObject;
+					currentweapon.transform.LookAt (autoTarget.transform);
 				} else {
-					autoTarget = new Vector3(-10000, -10000,-10000);
+					autoTarget = null;
 					currentweapon.transform.LookAt (hit.point);
 				}
 			} else {
@@ -136,16 +138,20 @@ public class PlayerControllerScript: MonoBehaviour {
 				currentWeaponScript.playEmpty ();
 			}
 		} else {
-			if (currentWeaponScript.aReload && !currentWeaponScript.Reloading) { //not for reload check, for telling if automatic or not
+			if (currentWeaponScript.aReload && !currentWeaponScript.Reloading) { //aReload is not for reload check, for telling if automatic or not
 				if (Input.GetButton ("Fire1")) {
+					//Debug.Log ("in aReload if statement after Fire1 made");
 					RaycastHit hit2;
 					if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit2, Mathf.Infinity, lm)) { //with autoTarget if statement below 
 						  //from checking AutoTrigger above, just raycast with lm layermask
 						if (!hit.transform.CompareTag ("Player") && !hit.transform.CompareTag ("Scrambler")) {
-							if (autoTarget != new Vector3 (-10000, -10000, -10000)) { //if autoTarget found a hit from mouse code
-								hit2.point = autoTarget; //autoBeam accepts only Raycasthit, so edit point first
+							if (autoTarget != null) { //if autoTarget found a hit from mouse code
+								//Debug.Log("in autoTarget changing if statement");
+								/*hit2.point = autoTarget; //autoBeam accepts only Raycasthit, so edit point first
 								  //could theoretically just rewrite autoBeam script, maybe later
-								currentWeaponScript.autoBeam (hit2);
+								currentWeaponScript.autoBeam (hit2); */
+								hit2.point = autoTarget.transform.position; //for player cannon more than missile 
+								currentWeaponScript.autoBeam (hit2, autoTarget); 
 							} else {
 								currentWeaponScript.autoBeam (hit2); //a coroutine in script will handle delay
 							}
@@ -162,9 +168,9 @@ public class PlayerControllerScript: MonoBehaviour {
 					RaycastHit hit2;
 					if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit2, Mathf.Infinity, lm)) { //same comment as similar if statement above
 						if (!hit.transform.CompareTag ("Player") && !hit.transform.CompareTag ("Scrambler")) {
-							if (autoTarget != new Vector3 (-10000, -10000, -10000)) {  //if autoTarget found a hit from mouse code
-								hit2.point = autoTarget; //autoBeam accepts only Raycasthit, so edit point first
-								currentWeaponScript.fireBeam(hit2);
+							if (autoTarget != null) {  //if autoTarget found a hit from mouse code
+								hit2.point = autoTarget.transform.position;
+								currentWeaponScript.fireBeam(hit2, autoTarget);
 							} else {
 								currentWeaponScript.fireBeam (hit2); //a coroutine in script will handle delay
 							}
@@ -235,12 +241,16 @@ public class PlayerControllerScript: MonoBehaviour {
 		}
 	} */
 
+	void OnDestroy() {
+		gm.gameOver ();
+	}
+
 	//draws the crosshair that replaces the mouse on screen
 	void OnGUI() {
 		GUI.DrawTexture(new Rect(mouse.x - (w / 2), mouse.y - (h / 2), w, h), t2d);
 
-		if (autoTarget != new Vector3(-10000, -10000,-10000)) { 
-			Vector3 drawLocation = Camera.main.WorldToScreenPoint (autoTarget); //not sure if screenpoint designed to be used with DrawTexture 
+		if (autoTarget != null) { 
+			Vector3 drawLocation = Camera.main.WorldToScreenPoint (autoTarget.transform.position); //not sure if screenpoint designed to be used with DrawTexture 
 			float drawY = Camera.main.pixelHeight - drawLocation.y;
 			  //drawtexture assumes top left is 0,0
 			  //however, WorldToScreenPoint assumes bottom left is 0,0

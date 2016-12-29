@@ -48,8 +48,8 @@ public class PlayerWeaponScript : MonoBehaviour {
 		gm.setAmmoText (ammo.ToString ());
 	}
 		
-	protected IEnumerator AutoDelay(RaycastHit hit) {
-		fireBeam (hit); //trying a wait for end of frame may start coroutine twice, causing 0 ammo problem while text still at one
+	protected IEnumerator AutoDelay(RaycastHit hit, GameObject autoedEnemy = null) {
+		fireBeam (hit, autoedEnemy); //trying a wait for end of frame may start coroutine twice, causing 0 ammo problem while text still at one
 		  //just remove it
 		  //knowing debugging, could pause on instant of 0 fire
 		canFireAuto = false;
@@ -57,16 +57,16 @@ public class PlayerWeaponScript : MonoBehaviour {
 		canFireAuto = true;
 	}
 
-	public void autoBeam(RaycastHit hit) {
+	public void autoBeam(RaycastHit hit, GameObject autoedEnemy = null) { //the autoedEnemy parameter is for missile script only, optional for beam
 		if (canFireAuto && !isReloading) { //canFireAuto is for shot delay, and !isRealoding is reload check
-			StartCoroutine (AutoDelay (hit));
+			StartCoroutine (AutoDelay (hit, autoedEnemy));
 		}
 	}
 
 
-	public virtual void fireBeam(RaycastHit hit) { 
+	public virtual void fireBeam(RaycastHit hit, GameObject autoedEnemy = null) { 
 		
-	} 
+	}
 
 	//player accesses this, a play for reloading is done in Reload coroutine
 	public void playEmpty() {

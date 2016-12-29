@@ -13,6 +13,7 @@ public class PlayerMissileScript : MonoBehaviour {
 	private GameObject enemy;
 	private Vector3 hitPoint = new Vector3(0,0,0); //default it to 0 so no null value
 	private bool isEnemyTheTarget = false;
+	private bool seekingStarted = false;
 	private float timeMarker;
 
 	// Use this for initialization
@@ -27,9 +28,15 @@ public class PlayerMissileScript : MonoBehaviour {
 		if (Time.time - timeMarker < upTime) {
 			transform.Translate (transform.forward * speed * Time.deltaTime, Space.World);
 		} else if (isEnemyTheTarget == true && enemy) {
+			//Debug.Log ("in looking at enemy stuff");
+			seekingStarted = true;
 			transform.LookAt (enemy.transform.position);
 			transform.Translate (transform.forward * speed * Time.deltaTime, Space.World);
+		} else if (seekingStarted) { //move forward instead of move to hitPoint if enemy destroyed during seeking
+			//Debug.Log("in looking at default seeking stuff");
+			transform.Translate (transform.forward * speed * Time.deltaTime, Space.World);
 		} else {
+			//Debug.Log ("in looking at hitPoint default stuff");
 			transform.LookAt (hitPoint);
 			transform.Translate (transform.forward * speed * Time.deltaTime, Space.World);
 		}
@@ -67,17 +74,16 @@ public class PlayerMissileScript : MonoBehaviour {
 	}
 
 	//changes isEnemyTheTarget bool if target is enemy else the missile's just firing at the environment
-	public void isEnemyTarget(RaycastHit hit) {
-		if (hit.transform.gameObject.CompareTag ("Enemy")) {
+	public void isEnemyTarget(RaycastHit hit, GameObject autoedEnemy = null) {
+		//Debug.Log (hit.transform.name);
+		if (autoedEnemy != null) {
+			isEnemyTheTarget = true;
+			enemy = autoedEnemy;
+		} else if (hit.transform.gameObject.CompareTag ("Enemy")) { 
 			isEnemyTheTarget = true;
 			enemy = hit.transform.gameObject;
-		} else {
-			hitPoint = hit.point;
 		}
-	}
-
-	public void setHitPoint(Vector3 hpt) {
-		hitPoint = hpt;
+		hitPoint = hit.transform.position; //no matter what, set a hitPoint, for when enemy dies
 	}
 
 

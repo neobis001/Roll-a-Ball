@@ -39,9 +39,13 @@ public class GameManager : MonoBehaviour {
 		ui.changeWeaponIcon (weaponIndex);
 	}
 
-	public void gameOver() {
-		GameObject player = pcs.gameObject; //include player stuff here
-		Destroy (player);
+	public void gameOver() { //player is destroyed separately before calling this
+		GameObject[] oList = FindObjectsOfType<GameObject>();
+		foreach (GameObject i in oList) {
+			if (i.layer == 0) { //destroy all objects in default layer
+				Destroy (i);
+			}
+		}
 		ui.setGameOverText ();
 		Camera.main.GetComponent<CameraController> ().enabled = false;
 		Cursor.visible = true;
