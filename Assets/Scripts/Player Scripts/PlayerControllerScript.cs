@@ -66,6 +66,8 @@ public class PlayerControllerScript: MonoBehaviour {
 		Cursor.visible = false; //cursor
 		GameObject gmObject = GameObject.FindGameObjectWithTag ("GameManager"); //gm stuff
 		gm = gmObject.GetComponent<GameManager>();
+		gm.loadSaveFile ();
+		Debug.Log ("called loadSaveFile");
 		gm.populateWeaponUpgrades (); //populate items/ui before running code
 		populateWeaponUI ();
 		gm.populateDefenseUpgrades ();
@@ -95,9 +97,13 @@ public class PlayerControllerScript: MonoBehaviour {
 			aimUpgrade = true;
 		}
 			
-		string[] layerStrings = new string[8]; //8 for number of default layers, 0-7
-		for (int i = 0; i < 8; i++) {
-			layerStrings[i] = LayerMask.LayerToName(i);
+		string[] layerStrings = new string[9]; //9 for number of default layers, 0-9 excluding 8: AutoTrigger
+		int indexCounter = 0; //need to separate indexing from numbers to put in given index
+		for (int i = 0; i < 10; i++) {
+			if (i != 8) {
+				layerStrings [indexCounter] = LayerMask.LayerToName (i);
+				indexCounter++;
+			}
 		}
 		lm = LayerMask.GetMask(layerStrings);
 
@@ -150,7 +156,6 @@ public class PlayerControllerScript: MonoBehaviour {
 								/*hit2.point = autoTarget; //autoBeam accepts only Raycasthit, so edit point first
 								  //could theoretically just rewrite autoBeam script, maybe later
 								currentWeaponScript.autoBeam (hit2); */
-								hit2.point = autoTarget.transform.position; //for player cannon more than missile 
 								currentWeaponScript.autoBeam (hit2, autoTarget); 
 							} else {
 								currentWeaponScript.autoBeam (hit2); //a coroutine in script will handle delay
@@ -169,7 +174,6 @@ public class PlayerControllerScript: MonoBehaviour {
 					if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit2, Mathf.Infinity, lm)) { //same comment as similar if statement above
 						if (!hit.transform.CompareTag ("Player") && !hit.transform.CompareTag ("Scrambler")) {
 							if (autoTarget != null) {  //if autoTarget found a hit from mouse code
-								hit2.point = autoTarget.transform.position;
 								currentWeaponScript.fireBeam(hit2, autoTarget);
 							} else {
 								currentWeaponScript.fireBeam (hit2); //a coroutine in script will handle delay
@@ -240,10 +244,6 @@ public class PlayerControllerScript: MonoBehaviour {
 			rb.velocity += new Vector3(0,2,0);
 		}
 	} */
-
-	void OnDestroy() {
-		gm.gameOver ();
-	}
 
 	//draws the crosshair that replaces the mouse on screen
 	void OnGUI() {

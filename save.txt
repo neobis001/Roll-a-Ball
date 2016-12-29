@@ -1,0 +1,7 @@
+aimUpgrade	False
+autoReloadUpgrade	False
+cyclopsUpgrade	False
+jetPackUpgrade	False
+movementUpgrade	False
+phlebotinumUpgrade	False
+reactiveArmorUpgrade	False

@@ -11,7 +11,12 @@ public class PlayerCannonScript : PlayerWeaponScript {
 	public override void fireBeam(RaycastHit hit, GameObject autoedEnemy = null) {
 		GameObject bfp = Instantiate (beamToBeFired);
 		bfp.transform.position = currentSpawner.transform.position;
-		bfp.transform.LookAt (hit.point);
+		if (autoedEnemy != null) {
+			bfp.transform.LookAt (autoedEnemy.transform);
+		} else {
+			bfp.transform.LookAt (hit.point);
+		}
+
 		if (phlebotinum) {
 			PlayerBeamScript pbs = bfp.GetComponent<PlayerBeamScript> ();
 			pbs.givePhlebotinumBoost (phlebotinumPercentage);

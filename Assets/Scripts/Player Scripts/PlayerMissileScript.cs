@@ -10,9 +10,11 @@ public class PlayerMissileScript : MonoBehaviour {
 
 	public GameObject destroyPs;
 
-	private GameObject enemy;
+	private GameObject enemy = null;
+	private bool defaultTargetFlag = false; //for final if statement in Update function, so other ifs run only once
 	private Vector3 hitPoint = new Vector3(0,0,0); //default it to 0 so no null value
 	private bool isEnemyTheTarget = false;
+	private Vector3 lastKnownEnemyLocation = new Vector3 (-10000, -10000, -10000); //default val
 	private bool seekingStarted = false;
 	private float timeMarker;
 
@@ -25,6 +27,10 @@ public class PlayerMissileScript : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
+		if (enemy) {
+			lastKnownEnemyLocation = enemy.transform.position;
+		}
+
 		if (Time.time - timeMarker < upTime) {
 			transform.Translate (transform.forward * speed * Time.deltaTime, Space.World);
 		} else if (isEnemyTheTarget == true && enemy) {
@@ -37,7 +43,15 @@ public class PlayerMissileScript : MonoBehaviour {
 			transform.Translate (transform.forward * speed * Time.deltaTime, Space.World);
 		} else {
 			//Debug.Log ("in looking at hitPoint default stuff");
-			transform.LookAt (hitPoint);
+			if (!defaultTargetFlag) {
+				defaultTargetFlag = true;
+				if (lastKnownEnemyLocation != new Vector3 (-10000, -10000, -10000)) {
+					//Debug.Log ("looking at last enemy location");
+					transform.LookAt (lastKnownEnemyLocation);
+				} else {
+					transform.LookAt (hitPoint);
+				}
+			}
 			transform.Translate (transform.forward * speed * Time.deltaTime, Space.World);
 		}
 	}
@@ -75,7 +89,6 @@ public class PlayerMissileScript : MonoBehaviour {
 
 	//changes isEnemyTheTarget bool if target is enemy else the missile's just firing at the environment
 	public void isEnemyTarget(RaycastHit hit, GameObject autoedEnemy = null) {
-		//Debug.Log (hit.transform.name);
 		if (autoedEnemy != null) {
 			isEnemyTheTarget = true;
 			enemy = autoedEnemy;
@@ -83,7 +96,7 @@ public class PlayerMissileScript : MonoBehaviour {
 			isEnemyTheTarget = true;
 			enemy = hit.transform.gameObject;
 		}
-		hitPoint = hit.transform.position; //no matter what, set a hitPoint, for when enemy dies
+		hitPoint = hit.point; //no matter what, set a hitPoint, for when enemy dies
 	}
 
 
