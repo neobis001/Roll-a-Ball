@@ -2,6 +2,7 @@
 using UnityEngine.UI;
 using System.Collections;
 using System.IO;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour {
 	public bool aimUpgrade = false; //for auto aim assist upgrade
@@ -9,11 +10,13 @@ public class GameManager : MonoBehaviour {
 	public bool cyclopsUpgrade = false; //cyclops motor upgrade, to increase speed
 	public GameObject[] defenseUpgradeList;
 	public bool fieldUpgrade = false;
-	public bool gameIsOver; 	//the purpose of this flag is that so other scripts can see this and stop running when needed
+	public bool inUpgradeScene = false;
 	public bool jetPackUpgrade = false;
 	public GameObject jPScriptHolder;
+	public int levelOverTime = 3; //time delay before next scene load if level won
 	public bool missileUpgrade = false;
 	public bool movementUpgrade = false; //used for gyroscopic movement upgrade (more acceleration)
+	public string nextScene;
 	public bool phlebotinumUpgrade = false;
 	public PlayerControllerScript pcs; 	//one player
 	public bool reactiveArmorUpgrade = false;
@@ -21,10 +24,14 @@ public class GameManager : MonoBehaviour {
 	public UIScript ui; 	//ui on screen
 	public GameObject[] weaponUpgradeList;
 
+	private int enemyCount = 0;
 	private bool scramblerFlag = false; //for scrambler
 
 	void Start () {
-		gameIsOver = false;
+		if (inUpgradeScene) {
+			Cursor.visible = true; //else made false by PlayerControllerScript.cs if possible
+		} 
+		enemyCount = GameObject.FindGameObjectsWithTag ("Enemy").Length;
 	}
 
 	PlayerItemScript getItemScript(string upgradeType, string id) {
@@ -46,6 +53,11 @@ public class GameManager : MonoBehaviour {
 		return null; //need this else get "not all code paths return value error"
 	}
 
+	IEnumerator LevelOverTimer() {
+		yield return new WaitForSeconds (levelOverTime);
+		SceneManager.LoadScene (nextScene);
+	}
+
 	string setItemVal(string upgradeType, string id, bool val) {
 		PlayerItemScript pis = getItemScript (upgradeType, id);
 		pis.unlocked = val; 
@@ -57,7 +69,7 @@ public class GameManager : MonoBehaviour {
 	public void changeDefenseIcon(string[] defenseIndexList) {
 		ui.changeDefenseIcon(defenseIndexList);
 	}
-
+		
 	//messenger
 	public void changeJetIcon(bool isOn) {
 		ui.changeJetIcon (isOn);
@@ -67,6 +79,14 @@ public class GameManager : MonoBehaviour {
 	public void changeWeaponIcon(int weaponIndex) {	
 		ui.changeWeaponIcon (weaponIndex);
 	}
+
+	public void decreaseEnemyCount() {
+		enemyCount--;
+		if (enemyCount == 0) {
+			gameWon ();
+		}
+	}
+
 
 	public void editModeItemLoad() { //for edit mode purposes only
 		bool[] itemBools = new bool[] {fieldUpgrade, missileUpgrade, repairUpgrade};
@@ -86,9 +106,23 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 		ui.setGameOverText ();
+		ui.turnOffAllButtons ();
 		Camera.main.GetComponent<CameraController> ().enabled = false;
 		Cursor.visible = true;
+	}
 
+	public void gameWon() {
+		GameObject[] oList = FindObjectsOfType<GameObject>();
+		foreach (GameObject i in oList) {
+			if (i.layer == 0) { //destroy all objects in default layer
+				Destroy (i);
+			}
+		}
+		ui.setGameWonText ();
+		ui.turnOffAllButtons ();
+		pcs.enabled = false;
+		Camera.main.GetComponent<CameraController> ().enabled = false;
+		StartCoroutine (LevelOverTimer ());
 	}
 
 	public void loadSaveFile() {
@@ -245,11 +279,10 @@ public class GameManager : MonoBehaviour {
 	public void setAmmoText(string txt) {
 		ui.setAmmoText (txt);
 	}
-
+		
 	public void setHealthText(string hlth) {
 		ui.setHealthText (hlth);
 	}
-
 
 	//to access scramblerFlag
 	public bool sFlag {

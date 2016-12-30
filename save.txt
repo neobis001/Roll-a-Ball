@@ -1,5 +1,5 @@
-aimUpgrade	False
-autoReloadUpgrade	False
+aimUpgrade	True
+autoReloadUpgrade	True
 cyclopsUpgrade	False
 fieldUpgrade	False
 jetPackUpgrade	False

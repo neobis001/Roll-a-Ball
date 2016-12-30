@@ -141,4 +141,17 @@ public class UIScript : MonoBehaviour {
 		ammoText.text = "";
 	}
 
+	public void setGameWonText() {
+		winText.text = "Level Complete!";
+		healthText.text = "";
+		ammoText.text = "";
+	}
+
+	public void turnOffAllButtons() {
+		Button[] blist = GetComponentsInChildren<Button> (); //assumes script is in parent that carries button children
+		foreach (Button i in blist) {
+			i.gameObject.SetActive (false);
+		}
+	}
+
 }

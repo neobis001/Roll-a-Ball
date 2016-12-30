@@ -7,8 +7,11 @@ public class EnemyScript : MonoBehaviour {
 	public GameObject missileToBeFired;
 	public float speed = 1;
 
+	private GameManager gm;
+
 	void Start() {
 		Destroy (gameObject, 10);
+		gm = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameManager> ();
 		StartCoroutine (Timer ());
 	}
 
@@ -22,6 +25,7 @@ public class EnemyScript : MonoBehaviour {
 
 		if (health <= 0) {
 			Destroy (gameObject);
+			gm.decreaseEnemyCount ();
 		}
 	}
 
