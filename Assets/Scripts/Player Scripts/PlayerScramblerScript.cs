@@ -44,7 +44,6 @@ public class PlayerScramblerScript : PlayerDefenseScript {
 		delay = false; 	
 		gm.sFlag = false; //at the end, re-disable scrambler flag
 		setEnabled ();
-		Debug.Log ("setEnabled here");
 	}
 
 	// Update is called once per frame

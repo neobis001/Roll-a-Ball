@@ -53,6 +53,7 @@
      <Compile Include="Assets\Scripts\ExplosionScript.cs" />
      <Compile Include="Assets\Scripts\ExtraFXScript.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
+     <Compile Include="Assets\Scripts\GroundCheckScript.cs" />
      <Compile Include="Assets\Scripts\OkScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\LaserFlashExplosionScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerBeamScript.cs" />

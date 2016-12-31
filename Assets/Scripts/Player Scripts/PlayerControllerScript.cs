@@ -23,6 +23,8 @@ public class PlayerControllerScript: MonoBehaviour {
 	  //relative to player Y, not world origin
 
 	private bool aimUpgrade = false; //grabs from gm, this is okay extra
+	public GameObject autoTarget = null; //for telling OnGUI whether to draw auto crosshair or not
+	//needs to be GameObject to change hit2 GameObject to enemy GameObject instead of default point
 	private bool reactiveArmor = false; //grabs from gm
 	  //it's extra, but that's okay
 	private GameObject currentDefense;
@@ -30,13 +32,14 @@ public class PlayerControllerScript: MonoBehaviour {
 	private PlayerWeaponScript currentWeaponScript; 
 /*	public Vector3 autoTarget = new Vector3(-10000, -10000,-10000); //for telling OnGUI whether to draw auto crosshair or not
 	  //making default value this to act like false bool value */
-	public GameObject autoTarget = null; //for telling OnGUI whether to draw auto crosshair or not
-	  //needs to be GameObject to change hit2 GameObject to enemy GameObject instead of default point
+	private bool fieldFrozen = false; //for when field starts and to prevent jet pack from running
 	private GameManager gm;
+	private bool groundContact = false;
 	private int h = 128; //crosshair height, shared with autoaim cursor for now
 	private PlayerJPHolderScript jPHolder;
 	private Vector2 mouse; 
 	private Rigidbody rb;
+	private bool successfulFire = false; //for checking whether it actually fired, for field delay purposes
 	private int w = 128; //crosshair width
 
 	//	private int weaponIndex = 0;
@@ -116,7 +119,6 @@ public class PlayerControllerScript: MonoBehaviour {
 					currentweapon.transform.LookAt (hit.point);
 				}
 			} else {
-				Debug.Log ("in here");
 				if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit, Mathf.Infinity, lm)) { //if not aimUpgrade
 					//ignore AutoTrigger stuff when doing raycast, doing another raycast is repetitive, but only idea i have right now
 					//need to reassign hit because we're considering physics w/o AutoTrigger now,unlike last if statement
@@ -129,6 +131,7 @@ public class PlayerControllerScript: MonoBehaviour {
 			if (Input.GetButtonDown ("Fire1") && !currentWeaponScript.Reloading) { //if no ammo, player attempts to fire, but is not reloading, then can play sound
 				currentWeaponScript.playEmpty ();
 			}
+			successfulFire = false; //whether in reloading stage or not, when you have 0 ammo, fire will always fail
 		} else {
 			if (currentWeaponScript.aReload && !currentWeaponScript.Reloading) { //aReload is not for reload check, for telling if auto reload or not
 				if (Input.GetButtonDown ("Fire1")) {
@@ -143,8 +146,10 @@ public class PlayerControllerScript: MonoBehaviour {
 							  //could theoretically just rewrite autoBeam script, maybe later
 							currentWeaponScript.autoBeam (hit2); */
 								currentWeaponScript.fireBeam (hit2, autoTarget); 
+								successfulFire = true;
 							} else {
 								currentWeaponScript.fireBeam (hit2); //a coroutine in script will handle delay
+								successfulFire = true;
 							}
 							if (currentWeaponScript.ammo == 0) { 
 								currentWeaponScript.setAmmo ("r");
@@ -152,6 +157,8 @@ public class PlayerControllerScript: MonoBehaviour {
 								sendHealthAndAmmoData ();
 							}
 						}
+					} else {
+						successfulFire = false;
 					}
 				}
 			} else {
@@ -160,12 +167,16 @@ public class PlayerControllerScript: MonoBehaviour {
 						if (!hit.transform.CompareTag ("Player") && !hit.transform.CompareTag ("Scrambler")) {
 							if (autoTarget != null) {  //if autoTarget found a hit from mouse code
 								currentWeaponScript.fireBeam (hit, autoTarget);
+								successfulFire = true;
 							} else {
 								currentWeaponScript.fireBeam (hit); //a coroutine in script will handle delay
+								successfulFire = true;
 							}
 							sendHealthAndAmmoData ();
 						}
 					}
+				} else {
+					successfulFire = false;
 				}
 			}
 		}
@@ -186,8 +197,8 @@ public class PlayerControllerScript: MonoBehaviour {
 		} else if (Input.GetKeyDown (KeyCode.Alpha3)) {
 			changeDefense (2);
 		}
-
-		if (Input.GetKeyDown (KeyCode.M)) {
+			
+		if (Input.GetKeyDown (KeyCode.M) && !fieldFrozen && groundContact) {
 			if (jPHolder != null) {
 			jPHolder.startJetPack (); //this checks if can activate too
 			}
@@ -373,6 +384,15 @@ public class PlayerControllerScript: MonoBehaviour {
 		sendHealthAndAmmoData (); //note: changing weapon icon has nothing to do w/ health/ammo text
 	}
 
+	public void freezeOnGround(bool freeze) {
+		if (freeze) {
+			rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+			fieldFrozen = true;
+		} else {
+			rb.constraints = RigidbodyConstraints.None;
+			fieldFrozen = false;
+		}
+	}
 
 	public void populateDefense(GameObject go) {
 		for (int i = 0; i < defenseList.Length; i++) {
@@ -467,8 +487,7 @@ public class PlayerControllerScript: MonoBehaviour {
 				numEnabled += 1;					
 			}
 		}
-
-		Debug.Log ("numEnabled is " + numEnabled.ToString ());
+			
 		if (numEnabled == 1) { 	//if GameObject is the only one at the time it was made enabled, changeWeapon to it
 			changeDefense (comparisonIndex);
 		} else { 	//else just make sure it's set enabled
@@ -516,8 +535,18 @@ public class PlayerControllerScript: MonoBehaviour {
 		}
 	}
 
+	public bool gContact {
+		get { return groundContact; }
+		set { groundContact = value; }
+	}
+
 	public Rigidbody rbProp { //made property so jet pack script can access it
 		get {return rb;}
 	}
+
+	public bool successFire {
+		get { return successfulFire; }
+	}
+		
 }
 	

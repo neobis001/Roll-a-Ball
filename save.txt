@@ -1,12 +1,12 @@
 aimUpgrade	False
 autoReloadUpgrade	True
-cyclopsUpgrade	False
+cyclopsUpgrade	True
 fieldUpgrade	True
-jetPackUpgrade	False
+jetPackUpgrade	True
 missileUpgrade	True
-movementUpgrade	False
+movementUpgrade	True
 phlebotinumUpgrade	False
-quadUpgrade	True
+quadUpgrade	False
 reactiveArmorUpgrade	False
 repairUpgrade	True
 scramblerUpgrade	True
