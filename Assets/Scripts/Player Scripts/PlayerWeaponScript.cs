@@ -4,7 +4,6 @@ using System.Collections;
 public class PlayerWeaponScript : PlayerItemScript {
 
 	public int ammo = 5;
-	public float autoDelay; //delay between each shot in auto fire
 	public int autoReloadDecrease; //percentage decrease 
 	public GameObject button;
 	public AudioSource emptySound;

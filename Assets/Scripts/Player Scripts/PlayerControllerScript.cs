@@ -3,27 +3,9 @@ using UnityEngine.UI;
 using System.Collections;
 
 
-//hold weapons/weapon switching here
-
-//12/4/16
-//when disabling an item, need it signal somehow for a switch in item highlight
-//what about weapons, when disabling them, we should make an override function doing something about that
-//same flag process though
-
-//need to find a way to communicate to GameManager.cs that weaponIndex made a successful change
-//and communicate a not successful one
-//while at the same time, changing weapon
-
-//get a list of all the available weapons
-//if not even one of them has a "true can-be-active" flag, return a false bool
-//else begin cycling through and trying to get the right weapon
-//use ref to change weaponIndex argument in place
-
-//then what's the bool for?
-//if it's true, then we can set a changeWeaponIcon, else don't even try for it
-
-//to do the enable/disable color stuff, we need to do update checks on all the items on every update frame
-
+//as of now, if there are no weapons in the weapon list, will error
+//just make sure at least basic cannon is in weapon list
+//still I think it's possible to do null checks with GUI and other stuff
 public class PlayerControllerScript: MonoBehaviour {
 	public int armorDamageDrop = 20; //a percentage
 	public int armorSpeedDrop = 30; //a percentage
@@ -38,6 +20,7 @@ public class PlayerControllerScript: MonoBehaviour {
 	public Texture2D auto2d; //auto aim crosshair
 	public GameObject[] weaponList; 
 	public float weaponYOffset; //reminder: y is up
+	  //relative to player Y, not world origin
 
 	private bool aimUpgrade = false; //grabs from gm, this is okay extra
 	private bool reactiveArmor = false; //grabs from gm
@@ -68,7 +51,6 @@ public class PlayerControllerScript: MonoBehaviour {
 		gm = gmObject.GetComponent<GameManager>();
 		gm.editModeItemLoad (); //for edit mode only when not loading save.txt, will get overriden by loadSaveFile if its code is allowed to run
 		gm.loadSaveFile ();
-		Debug.Log ("called loadSaveFile");
 		gm.populateWeaponUpgrades (); //populate items/ui before running code
 		populateWeaponUI ();
 		gm.populateDefenseUpgrades ();
@@ -109,7 +91,7 @@ public class PlayerControllerScript: MonoBehaviour {
 		lm = LayerMask.GetMask(layerStrings);
 
 		changeWeapon (0); //switch items early
-		changeDefense (0); 
+		changeDefense (0);
 		gm.setAmmoText (currentWeaponScript.ammo.ToString ()); //update text early
 		gm.setHealthText (health.ToString ());
 
@@ -123,7 +105,8 @@ public class PlayerControllerScript: MonoBehaviour {
 
 		//this code checkes where the currentWeapon should point at. it doesn't directly influence the fire location
 		  //it's setting an autoTarget that influences the fire location, otherwise the normal fire location is unaffected
-		if (Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit)) {  //moved this code below the switch weapon code so that rotate is done on the same frame as the new weapon, not the old one
+		//(exception: for the quad cannon, it does have influence)
+		if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit)) {  //moved this code below the switch weapon code so that rotate is done on the same frame as the new weapon, not the old one
 			if (aimUpgrade) {
 				if (hit.transform.CompareTag ("AutoTrigger")) {
 					autoTarget = hit.transform.GetComponentInParent<Transform> ().gameObject;
@@ -133,8 +116,10 @@ public class PlayerControllerScript: MonoBehaviour {
 					currentweapon.transform.LookAt (hit.point);
 				}
 			} else {
-				if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), Mathf.Infinity, lm)) { //if not aimUpgrade
-					  //ignore AutoTrigger stuff when doing raycast, doing another raycast is repetitive, but only idea i have right now
+				Debug.Log ("in here");
+				if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit, Mathf.Infinity, lm)) { //if not aimUpgrade
+					//ignore AutoTrigger stuff when doing raycast, doing another raycast is repetitive, but only idea i have right now
+					//need to reassign hit because we're considering physics w/o AutoTrigger now,unlike last if statement
 					currentweapon.transform.LookAt (hit.point);
 				}
 			}
@@ -150,13 +135,13 @@ public class PlayerControllerScript: MonoBehaviour {
 					//Debug.Log ("in aReload if statement after Fire1 made");
 					RaycastHit hit2;
 					if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit2, Mathf.Infinity, lm)) { //with autoTarget if statement below 
-						  //from checking AutoTrigger above, just raycast with lm layermask
+						//from checking AutoTrigger above, just raycast with lm layermask
 						if (!hit.transform.CompareTag ("Player") && !hit.transform.CompareTag ("Scrambler")) {
 							if (autoTarget != null) { //if autoTarget found a hit from mouse code
 								//Debug.Log("in autoTarget changing if statement");
 								/*hit2.point = autoTarget; //autoBeam accepts only Raycasthit, so edit point first
-								  //could theoretically just rewrite autoBeam script, maybe later
-								currentWeaponScript.autoBeam (hit2); */
+							  //could theoretically just rewrite autoBeam script, maybe later
+							currentWeaponScript.autoBeam (hit2); */
 								currentWeaponScript.fireBeam (hit2, autoTarget); 
 							} else {
 								currentWeaponScript.fireBeam (hit2); //a coroutine in script will handle delay
@@ -171,13 +156,12 @@ public class PlayerControllerScript: MonoBehaviour {
 				}
 			} else {
 				if (Input.GetButtonDown ("Fire1") && !currentWeaponScript.Reloading) { //if click and not reloading, then fire
-					RaycastHit hit2;
-					if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit2, Mathf.Infinity, lm)) { //same comment as similar if statement above
+					if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit, Mathf.Infinity, lm)) { //same comment as similar if statement above
 						if (!hit.transform.CompareTag ("Player") && !hit.transform.CompareTag ("Scrambler")) {
 							if (autoTarget != null) {  //if autoTarget found a hit from mouse code
-								currentWeaponScript.fireBeam(hit2, autoTarget);
+								currentWeaponScript.fireBeam (hit, autoTarget);
 							} else {
-								currentWeaponScript.fireBeam (hit2); //a coroutine in script will handle delay
+								currentWeaponScript.fireBeam (hit); //a coroutine in script will handle delay
 							}
 							sendHealthAndAmmoData ();
 						}
@@ -185,13 +169,13 @@ public class PlayerControllerScript: MonoBehaviour {
 				}
 			}
 		}
-
+			
 		if (Input.GetKeyDown (KeyCode.Q) && !currentWeaponScript.Reloading) { 	//add code to switch currentweapon and currentDefense
-			changeWeapon(0);
+			changeWeapon (0);
 		} else if (Input.GetKeyDown (KeyCode.E) && !currentWeaponScript.Reloading) { //don't switch during reloading phase, messes up text
 			changeWeapon (1);
-		} else if (Input.GetKeyDown(KeyCode.R)) {
-			currentWeaponScript.setAmmo("r"); //text set is also managed in this function
+		} else if (Input.GetKeyDown (KeyCode.R)) {
+			currentWeaponScript.setAmmo ("r"); //text set is also managed in this function
 			//one more !isReloading check included for extra, and handles case where already have full ammo
 		}
 			
@@ -209,9 +193,12 @@ public class PlayerControllerScript: MonoBehaviour {
 			}
 		}
 
-		currentweapon.transform.position = transform.position + new Vector3 (0, weaponYOffset, 0); //move currentweapon and currentDefense as needed
-		currentDefense.transform.position = transform.position + offset; //put transform code below so stuff is positioned after a changeWeapon for no frame oddities
-
+		if (currentweapon != null) {
+			currentweapon.transform.position = transform.position + new Vector3 (0, weaponYOffset, 0); //move currentweapon and currentDefense as needed
+		}
+		if (currentDefense != null) {
+			currentDefense.transform.position = transform.position + offset; //put transform code below so stuff is positioned after a changeWeapon for no frame oddities
+		}
 	}
 
 	void FixedUpdate() {
@@ -313,7 +300,7 @@ public class PlayerControllerScript: MonoBehaviour {
 		}
 	}
 
-	public void changeDefense(int index, bool bypassCheck = false) {
+	public void changeDefense(int index) {
 		if (!defenseList [index]) { 	//check if index is populated, else do nothing
 			return;
 		}
@@ -322,10 +309,6 @@ public class PlayerControllerScript: MonoBehaviour {
 		PlayerDefenseScript pds = go.GetComponent<PlayerDefenseScript> ();
 		if (!pds.eFlag) { 	//check if index has item available to switch too, if not, do nothing
 			return;
-		} else if (!bypassCheck) { 	//bypassCheck avoids same switch check, don't know if I need it 
-			if (go == currentDefense) { //or if object to switch to is already active, don't do anything
-				return;
-			} 
 		}
 
 		currentDefense = defenseList[index]; //creates a list of indices mapping each item to an active status to be passed onto gm and ui
@@ -391,6 +374,38 @@ public class PlayerControllerScript: MonoBehaviour {
 	}
 
 
+	public void populateDefense(GameObject go) {
+		for (int i = 0; i < defenseList.Length; i++) {
+			if (!defenseList [i]) {
+				defenseList [i] = go;
+				break;
+			}
+		}
+	}
+
+	public void populateWeapon(GameObject go, string id) {
+		if (id == "quad") {
+			for (int i = 0; i < weaponList.Length; i++) {
+				if (weaponList [i]) {
+					if (weaponList [i].GetComponent<PlayerWeaponScript> ().id == "cannon") {
+						weaponList [i].SetActive (false);
+						weaponList [i] = go;
+						break;
+					}
+				}
+			}
+		} else {
+			for (int i = 0; i < weaponList.Length; i++) {
+				if (!weaponList [i]) {
+					weaponList [i] = go;
+					break;
+				}
+			}
+		}
+
+	}
+
+
 
 
 	//switches defense item in response to it getting disabled if needed
@@ -453,6 +468,7 @@ public class PlayerControllerScript: MonoBehaviour {
 			}
 		}
 
+		Debug.Log ("numEnabled is " + numEnabled.ToString ());
 		if (numEnabled == 1) { 	//if GameObject is the only one at the time it was made enabled, changeWeapon to it
 			changeDefense (comparisonIndex);
 		} else { 	//else just make sure it's set enabled
@@ -477,25 +493,6 @@ public class PlayerControllerScript: MonoBehaviour {
 				}
 			}
 			gm.changeDefenseIcon (indices2); //update ui
-		}
-
-	}
-
-	public void populateDefense(GameObject go) {
-		for (int i = 0; i < defenseList.Length; i++) {
-			if (!defenseList [i]) {
-				defenseList [i] = go;
-				break;
-			}
-		}
-	}
-
-	public void populateWeapon(GameObject go) {
-		for (int i = 0; i < weaponList.Length; i++) {
-			if (!weaponList [i]) {
-				weaponList [i] = go;
-				break;
-			}
 		}
 	}
 

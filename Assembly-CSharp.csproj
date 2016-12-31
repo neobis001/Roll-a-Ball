@@ -65,6 +65,7 @@
      <Compile Include="Assets\Scripts\Player Scripts\PlayerJPHolderScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerJetPackScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerMissileScript.cs" />
+     <Compile Include="Assets\Scripts\Player Scripts\PlayerQuadCScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerRepairKitScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerRepairScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerSMissileScript.cs" />

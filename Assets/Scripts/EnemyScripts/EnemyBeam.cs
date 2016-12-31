@@ -24,7 +24,7 @@ public class EnemyBeam : MonoBehaviour {
 			Instantiate (fieldReflectSound, transform.position, Quaternion.identity);
 			transform.forward *= -1;
 		} else {
-			string[] checkList = new string[]{"Enemy", "EnemyMissile", "AutoTrigger", "EnemyLaser"};
+			string[] checkList = new string[]{"Enemy", "EnemyMissile", "AutoTrigger", "EnemyLaser", "Scrambler"};
 			foreach (string tag in checkList) {
 				if (other.gameObject.CompareTag (tag)) {
 					return;

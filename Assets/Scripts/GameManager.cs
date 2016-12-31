@@ -19,8 +19,10 @@ public class GameManager : MonoBehaviour {
 	public string nextScene;
 	public bool phlebotinumUpgrade = false;
 	public PlayerControllerScript pcs; 	//one player
+	public bool quadUpgrade = false;
 	public bool reactiveArmorUpgrade = false;
 	public bool repairUpgrade = false;
+	public bool scramblerUpgrade = false;
 	public UIScript ui; 	//ui on screen
 	public GameObject[] weaponUpgradeList;
 
@@ -89,9 +91,9 @@ public class GameManager : MonoBehaviour {
 
 
 	public void editModeItemLoad() { //for edit mode purposes only
-		bool[] itemBools = new bool[] {fieldUpgrade, missileUpgrade, repairUpgrade};
-		string[] itemIds = new string[] { "field", "missile", "repairKit" };
-		string[] upgradeTypes = new string[] {"defense", "weapon", "defense" };
+		bool[] itemBools = new bool[] {scramblerUpgrade, fieldUpgrade, missileUpgrade, repairUpgrade, quadUpgrade};
+		string[] itemIds = new string[] { "scrambler", "field", "missile", "repairKit", "quad"};
+		string[] upgradeTypes = new string[] {"defense", "defense", "weapon", "defense", "weapon" };
 		for (int i = 0; i < itemBools.Length; i++) {
 			PlayerItemScript pis = getItemScript (upgradeTypes [i], itemIds [i]);
 			pis.unlocked = itemBools [i];
@@ -126,8 +128,6 @@ public class GameManager : MonoBehaviour {
 	}
 
 	public void loadSaveFile() {
-		//return;
-		Debug.Log ("attempting to load save file");
 		if (File.Exists ("save.txt")) {
 			string[] upList = File.ReadAllLines ("save.txt");
 			foreach (string i in upList) {
@@ -169,6 +169,10 @@ public class GameManager : MonoBehaviour {
 				case "phlebotinumUpgrade":
 					phlebotinumUpgrade = val;
 					break;
+				case "quadUpgrade":
+					quadUpgrade = val;
+					setItemVal ("weapon", "quad", quadUpgrade);
+					break;
 				case "reactiveArmorUpgrade":
 					reactiveArmorUpgrade = val;
 					break;
@@ -176,11 +180,15 @@ public class GameManager : MonoBehaviour {
 					repairUpgrade = val;
 					setItemVal ("defense", "repairKit", repairUpgrade);
 					break;
+				case "scramblerUpgrade":
+					scramblerUpgrade = val;
+					setItemVal ("defense", "scrambler", scramblerUpgrade);
+					break;
 				}
 			}
 		} else { //if file doesn't exist, write to file with default false bool
 			string[] varNameList = new string[] {"aimUpgrade", "autoReloadUpgrade", "cyclopsUpgrade", "fieldUpgrade", "jetPackUpgrade", 
-				"missileUpgrade", "movementUpgrade", "phlebotinumUpgrade", "reactiveArmorUpgrade", "repairUpgrade"};
+				"missileUpgrade", "movementUpgrade", "phlebotinumUpgrade", "quadUpgrade", "reactiveArmorUpgrade", "repairUpgrade", "scramblerUpgrade"};
 			foreach (string i in varNameList) {
 				string txt = i; //can't augment directly to i
 				switch (txt) {
@@ -216,6 +224,10 @@ public class GameManager : MonoBehaviour {
 					phlebotinumUpgrade = false;
 					txt += "\t" + phlebotinumUpgrade.ToString();
 					break;
+				case "quadUpgrade":
+					quadUpgrade = false;
+					txt += "\t" + phlebotinumUpgrade.ToString ();
+					break;
 				case "reactiveArmorUpgrade":
 					reactiveArmorUpgrade = false;
 					txt += "\t" + reactiveArmorUpgrade.ToString();
@@ -223,6 +235,10 @@ public class GameManager : MonoBehaviour {
 				case "repairUpgrade":
 					repairUpgrade = false;
 					txt += "\t" + setItemVal ("defense", "repairKit", repairUpgrade);
+					break;
+				case "scramblerUpgrade":
+					scramblerUpgrade = false;
+					txt += "\t" + scramblerUpgrade.ToString ();
 					break;
 				}
 				File.AppendAllText ("save.txt", txt + "\n");
@@ -236,7 +252,7 @@ public class GameManager : MonoBehaviour {
 		foreach (GameObject i in weaponUpgradeList) {
 			PlayerWeaponScript pws = i.GetComponent<PlayerWeaponScript> ();
 			if (pws.unlocked) {
-				pcs.populateWeapon (i);
+				pcs.populateWeapon (i, pws.id); //unlike defense, need id to check quad override
 			} else {
 				pws.gameObject.SetActive (false);
 			}
