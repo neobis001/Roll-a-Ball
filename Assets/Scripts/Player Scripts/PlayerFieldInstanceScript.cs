@@ -20,6 +20,7 @@ public class PlayerFieldInstanceScript : MonoBehaviour {
 		transform.position = player.transform.position;
 
 		if (Input.GetMouseButtonDown (0) && pcs.successFire) {
+			Debug.Log ("success fire");
 			delayElapsed += delayBoost;
 		}
 	}

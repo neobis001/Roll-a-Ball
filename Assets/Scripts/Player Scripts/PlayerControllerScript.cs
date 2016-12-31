@@ -145,11 +145,9 @@ public class PlayerControllerScript: MonoBehaviour {
 								/*hit2.point = autoTarget; //autoBeam accepts only Raycasthit, so edit point first
 							  //could theoretically just rewrite autoBeam script, maybe later
 							currentWeaponScript.autoBeam (hit2); */
-								currentWeaponScript.fireBeam (hit2, autoTarget); 
-								successfulFire = true;
+								currentWeaponScript.fireBeam (hit2, autoTarget); //successFire handled in fireBeam
 							} else {
 								currentWeaponScript.fireBeam (hit2); //a coroutine in script will handle delay
-								successfulFire = true;
 							}
 							if (currentWeaponScript.ammo == 0) { 
 								currentWeaponScript.setAmmo ("r");
@@ -166,11 +164,9 @@ public class PlayerControllerScript: MonoBehaviour {
 					if (Physics.Raycast (Camera.main.ScreenPointToRay (Input.mousePosition), out hit, Mathf.Infinity, lm)) { //same comment as similar if statement above
 						if (!hit.transform.CompareTag ("Player") && !hit.transform.CompareTag ("Scrambler")) {
 							if (autoTarget != null) {  //if autoTarget found a hit from mouse code
-								currentWeaponScript.fireBeam (hit, autoTarget);
-								successfulFire = true;
+								currentWeaponScript.fireBeam (hit, autoTarget); //successFire handled in fireBeam
 							} else {
 								currentWeaponScript.fireBeam (hit); //a coroutine in script will handle delay
-								successfulFire = true;
 							}
 							sendHealthAndAmmoData ();
 						}

@@ -31,5 +31,6 @@ public class PlayerCannonScript : PlayerWeaponScript {
 		Instantiate (firePrefab, currentSpawner.transform.position, currentSpawner.transform.rotation);
 
 		setAmmo("d");
+		pcs.successFire = true;
 	}
 }

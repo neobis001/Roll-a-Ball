@@ -23,6 +23,7 @@ public class PlayerSMissileScript : PlayerWeaponScript {
 		Instantiate (firePrefab, currentSpawner.transform.position, Quaternion.identity);
 
 		setAmmo ("d");
+		pcs.successFire = true;
 	}
 
 
