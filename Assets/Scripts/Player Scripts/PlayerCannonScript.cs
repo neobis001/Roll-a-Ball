@@ -9,6 +9,12 @@ public class PlayerCannonScript : PlayerWeaponScript {
 	public int phlebotinumPercentage; //how much to increase damage
 
 	public override void fireBeam(RaycastHit hit, GameObject autoedEnemy = null) {
+		if (!canFireShot) {
+			pcs.successFire = false;
+			return;
+		}
+		StartCoroutine (FireDelay ());
+
 		GameObject bfp = Instantiate (beamToBeFired);
 		bfp.transform.position = currentSpawner.transform.position;
 		if (autoedEnemy != null) {

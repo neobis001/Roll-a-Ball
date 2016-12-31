@@ -546,6 +546,7 @@ public class PlayerControllerScript: MonoBehaviour {
 
 	public bool successFire {
 		get { return successfulFire; }
+		set { successfulFire = value; }
 	}
 		
 }

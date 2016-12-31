@@ -7,6 +7,12 @@ public class PlayerSMissileScript : PlayerWeaponScript {
 	public int phlebotinumPercentage; //how much to increase damage
 
 	public override void fireBeam(RaycastHit hit, GameObject autoedEnemy = null) {
+		if (!canFireShot) {
+			pcs.successFire = false;
+			return;
+		}
+		StartCoroutine (FireDelay ());
+
 		GameObject mtbf = (GameObject) Instantiate (missileToBeFired, currentSpawner.transform.position, Quaternion.Euler (-90, 0, 0));
 		PlayerMissileScript pms = mtbf.GetComponent<PlayerMissileScript> ();
 		pms.isEnemyTarget (hit, autoedEnemy);

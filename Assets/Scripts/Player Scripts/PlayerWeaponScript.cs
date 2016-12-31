@@ -7,23 +7,29 @@ public class PlayerWeaponScript : PlayerItemScript {
 	public int autoReloadDecrease; //percentage decrease 
 	public GameObject button;
 	public AudioSource emptySound;
+	public float fireDelayTime = 0.1f;
 	public int magazineDecrease; //a percentage
 	public int phlebotinumReloadDecrease; //percentage decrease in time reload
 	public AudioSource reloadSound;
 	public float reloadTime; //float so can do a decimal percentage decrease
 
+	protected bool canFireShot = true;
 	protected GameObject currentSpawner;
-	protected bool phlebotinum = false; //make protected so derived classes can check it when instantiating projectiles
-	protected bool canFireAuto = true; //combined with autoDelay bool, derived so overrided fireBeam can access
+	//protected bool canFireAuto = true; //combined with autoDelay bool, derived so overrided fireBeam can access
 	 //this wasn't made for checking reloading status, made isReloading for that
+	protected PlayerControllerScript pcs;
+	protected bool phlebotinum = false; //make protected so derived classes can check it when instantiating projectiles
 
 	private bool autoReload = false; //made private unlike phlebotinum, doesn't need derived access
+	  //for reload without pressing r. not connected to auto fire
 	private int initialAmmo;
 	private bool isReloading; //for preventing another reloading while one is taking place
 	private GameManager gm; //for accessing text only in reload case, else player handles ammo text change
 
 
+
 	void Start() {
+		pcs = GameObject.FindGameObjectWithTag ("Player").GetComponent<PlayerControllerScript> ();
 		gm = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameManager>();
 		initialAmmo = ammo;
 		Transform[] possibleObjects = GetComponentsInChildren<Transform> ();
@@ -62,6 +68,11 @@ public class PlayerWeaponScript : PlayerItemScript {
 			StartCoroutine (AutoDelay (hit, autoedEnemy));
 		}
 	} */
+	protected IEnumerator FireDelay() {
+		canFireShot = false;
+		yield return new WaitForSeconds (fireDelayTime);
+		canFireShot = true;	
+	}
 
 
 	public virtual void fireBeam(RaycastHit hit, GameObject autoedEnemy = null) { 
