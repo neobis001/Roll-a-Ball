@@ -10,7 +10,6 @@ public class GameManager : MonoBehaviour {
 	public bool cyclopsUpgrade = false; //cyclops motor upgrade, to increase speed
 	public GameObject[] defenseUpgradeList;
 	public bool fieldUpgrade = false;
-	public bool inUpgradeScene = false;
 	public bool jetPackUpgrade = false;
 	public GameObject jPScriptHolder;
 	public int levelOverTime = 3; //time delay before next scene load if level won
@@ -30,9 +29,6 @@ public class GameManager : MonoBehaviour {
 	private bool scramblerFlag = false; //for scrambler
 
 	void Start () {
-		if (inUpgradeScene) {
-			Cursor.visible = true; //else made false by PlayerControllerScript.cs if possible
-		} 
 		enemyCount = GameObject.FindGameObjectsWithTag ("Enemy").Length;
 	}
 
@@ -60,10 +56,12 @@ public class GameManager : MonoBehaviour {
 		SceneManager.LoadScene (nextScene);
 	}
 
-	string setItemVal(string upgradeType, string id, bool val) {
+	void setItemVal(string upgradeType, string id, bool val, bool setVal = true) {
+		if (!setVal) {
+			return;
+		}
 		PlayerItemScript pis = getItemScript (upgradeType, id);
 		pis.unlocked = val; 
-		return pis.unlocked.ToString ();
 	}
 		
 
@@ -127,7 +125,8 @@ public class GameManager : MonoBehaviour {
 		StartCoroutine (LevelOverTimer ());
 	}
 
-	public void loadSaveFile() {
+	public void loadSaveFile(bool setVal = true) { //setVal should be false because when called in UpgradeManager
+		  //there's no item to set values to, only gm bools
 		if (File.Exists ("save.txt")) {
 			string[] upList = File.ReadAllLines ("save.txt");
 			foreach (string i in upList) {
@@ -154,14 +153,14 @@ public class GameManager : MonoBehaviour {
 					break;
 				case "fieldUpgrade":
 					fieldUpgrade = val;
-					setItemVal ("defense", "field", fieldUpgrade); //string is returned, just didn't use it
+					setItemVal ("defense", "field", fieldUpgrade, setVal); //string is returned, just didn't use it
 					break;
 				case "jetPackUpgrade":
 					jetPackUpgrade = val;
 					break;
 				case "missileUpgrade":
 					missileUpgrade = val;
-					setItemVal ("weapon", "missile", missileUpgrade);
+					setItemVal ("weapon", "missile", missileUpgrade, setVal);
 					break;
 				case "movementUpgrade":
 					movementUpgrade = val;
@@ -171,18 +170,18 @@ public class GameManager : MonoBehaviour {
 					break;
 				case "quadUpgrade":
 					quadUpgrade = val;
-					setItemVal ("weapon", "quad", quadUpgrade);
+					setItemVal ("weapon", "quad", quadUpgrade, setVal);
 					break;
 				case "reactiveArmorUpgrade":
 					reactiveArmorUpgrade = val;
 					break;
 				case "repairUpgrade":
 					repairUpgrade = val;
-					setItemVal ("defense", "repairKit", repairUpgrade);
+					setItemVal ("defense", "repairKit", repairUpgrade, setVal);
 					break;
 				case "scramblerUpgrade":
 					scramblerUpgrade = val;
-					setItemVal ("defense", "scrambler", scramblerUpgrade);
+					setItemVal ("defense", "scrambler", scramblerUpgrade, setVal);
 					break;
 				}
 			}
@@ -206,7 +205,8 @@ public class GameManager : MonoBehaviour {
 					break;
 				case "fieldUpgrade":
 					fieldUpgrade = false;
-					txt += "\t" + setItemVal ("defense", "field", fieldUpgrade);
+					setItemVal ("defense", "field", fieldUpgrade, setVal);
+					txt += "\t" + fieldUpgrade.ToString();
 					break;
 				case "jetPackUpgrade":
 					jetPackUpgrade = false;
@@ -214,7 +214,8 @@ public class GameManager : MonoBehaviour {
 					break;
 				case "missileUpgrade":
 					missileUpgrade = false;
-					txt += "\t" + setItemVal ("weapon", "missile", missileUpgrade);
+					setItemVal ("weapon", "missile", missileUpgrade, setVal);
+					txt += "\t" + missileUpgrade.ToString ();
 					break;
 				case "movementUpgrade":
 					movementUpgrade = false;
@@ -234,7 +235,8 @@ public class GameManager : MonoBehaviour {
 					break;
 				case "repairUpgrade":
 					repairUpgrade = false;
-					txt += "\t" + setItemVal ("defense", "repairKit", repairUpgrade);
+					setItemVal ("defense", "repairKit", repairUpgrade, setVal);
+					txt += "\t" + repairUpgrade.ToString();
 					break;
 				case "scramblerUpgrade":
 					scramblerUpgrade = false;

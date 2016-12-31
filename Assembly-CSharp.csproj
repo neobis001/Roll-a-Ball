@@ -45,6 +45,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\FireDelayLogic.cs" />
      <Compile Include="Assets\Scripts\CameraController.cs" />
      <Compile Include="Assets\Scripts\EnemyScripts\EnemyBeam.cs" />
      <Compile Include="Assets\Scripts\EnemyScripts\EnemyMissileScript.cs" />
@@ -53,8 +54,8 @@
      <Compile Include="Assets\Scripts\ExplosionScript.cs" />
      <Compile Include="Assets\Scripts\ExtraFXScript.cs" />
      <Compile Include="Assets\Scripts\GameManager.cs" />
-     <Compile Include="Assets\Scripts\GroundCheckScript.cs" />
      <Compile Include="Assets\Scripts\OkScript.cs" />
+     <Compile Include="Assets\Scripts\Player Scripts\GroundCheckScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\LaserFlashExplosionScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerBeamScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerCannonScript.cs" />
@@ -74,6 +75,8 @@
      <Compile Include="Assets\Scripts\Player Scripts\PlayerScramblerScript.cs" />
      <Compile Include="Assets\Scripts\Player Scripts\PlayerWeaponScript.cs" />
      <Compile Include="Assets\Scripts\UIScript.cs" />
+     <Compile Include="Assets\Scripts\UpgradeButton.cs" />
+     <Compile Include="Assets\Scripts\UpgradeManager.cs" />
      <Compile Include="Assets\TurretController.cs" />
  <Reference Include="UnityEngine.UI">
  <HintPath>C:/Program Files/Unity/Editor/Data/UnityExtensions/Unity/GUISystem/UnityEngine.UI.dll</HintPath>
