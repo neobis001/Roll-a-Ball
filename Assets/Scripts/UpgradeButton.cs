@@ -62,15 +62,15 @@ public class UpgradeButton : MonoBehaviour {
 		} else {
 			Debug.LogWarning("checkPivot() didn't read anything. currentPivot value was " + currentPivot);
 		}
-
 	}
 
 	bool clippedEdge(string side) {
 		Vector2 refPos = new Vector2();
 		refPos += descriptionRect.anchoredPosition;
 		Vector2 screenPos = descriptionRect.anchorMin; //anchorMax is the same if anchor is a point
-		screenPos.x *= Screen.width;
-		screenPos.y *= Screen.height;
+		screenPos.x *= um.cs.referenceResolution.x; //screen sizes vary, which is why Screen.width and height didn't work for a check like this
+		  //regardless of the screen res, the reference res and rect transforms stay the same, so use reference res
+		screenPos.y *= um.cs.referenceResolution.y;
 		refPos += screenPos;
 
 		if (side == "left") {
@@ -107,37 +107,6 @@ public class UpgradeButton : MonoBehaviour {
 		}
 
 	}
-
-	bool clippedLeftEdge() {
-		Vector2 refPos = new Vector2();
-		refPos += descriptionRect.anchoredPosition;
-		Vector2 screenPos = descriptionRect.anchorMin; //anchorMax is the same if anchor is a point
-		screenPos.x *= Screen.width;
-		screenPos.y *= Screen.height;
-		refPos += screenPos;
-		refPos.x -= descriptionRect.rect.width;
-		if (refPos.x < 0) {
-			return true;
-		} else {
-			return false;
-		} 
-	}
-
-	bool clippedRightEdge() {
-		Vector2 refPos = new Vector2();
-		refPos += descriptionRect.anchoredPosition;
-		Vector2 screenPos = descriptionRect.anchorMin; //anchorMax is the same if anchor is a point
-		screenPos.x *= Screen.width;
-		screenPos.y *= Screen.height;
-		refPos += screenPos;
-		refPos.x += descriptionRect.rect.width;
-		if (refPos.x > Screen.width) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
 
 	void movePivot() { //works if anchors are in same place
 		RectTransform btnRect = btn.GetComponent<RectTransform>();  
@@ -283,6 +252,8 @@ public class UpgradeButton : MonoBehaviour {
 
 
 	public void turnOnDescription() {
+		movePivot (); //because descriptionRect doesn't move automatically with button
+		  //move pivot to button with current pivot first, then do a checkPivot check, then move pivot again if changes needed
 		checkPivot ();
 		movePivot ();
 		descriptionRect.gameObject.SetActive (true);

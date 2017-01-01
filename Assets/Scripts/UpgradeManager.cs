@@ -5,6 +5,7 @@ using System.IO;
 
 public class UpgradeManager : MonoBehaviour {
 
+	public CanvasScaler cs;
 	public OkScript okButton;
 	public Color originalNormalC; //plan is to make normal and highlighted color the same
 	//whether toggled on or off 
@@ -37,6 +38,12 @@ public class UpgradeManager : MonoBehaviour {
 		checkOk ();
 	}
 
+	void Update() {
+		if (Input.GetKeyDown (KeyCode.Escape)) {
+			cycleSelection ("normal", "none");
+		}
+	}
+
 	public void checkOk() {
 		int numInteractable = 0;
 		foreach (UpgradeButton i in upgradeButtons) {
@@ -59,7 +66,7 @@ public class UpgradeManager : MonoBehaviour {
 		okButton.setUpInteractable (false);
 	}
 
-	public void cycleSelection(string mode, string gmBool) {
+	public void cycleSelection(string mode, string gmBool) { //"gmBool = "none"" means all buttons are changed to "mode"
 		foreach (UpgradeButton i in upgradeButtons) {
 			if (i.gmBool != gmBool) {
 				i.toggle (mode);
