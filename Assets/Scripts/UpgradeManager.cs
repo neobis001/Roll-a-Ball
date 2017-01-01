@@ -1,9 +1,11 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 using System.IO;
 
 public class UpgradeManager : MonoBehaviour {
 
+	public OkScript okButton;
 	public Color originalNormalC; //plan is to make normal and highlighted color the same
 	//whether toggled on or off 
 	public Color notInteractableC; //not interactable implies upgrade already there
@@ -18,6 +20,8 @@ public class UpgradeManager : MonoBehaviour {
 		Cursor.visible = true;
 		gm = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameManager> ();
 		gm.loadSaveFile (setVal: false);
+		okButton.setUpButton (); //done here before checkOk()
+
 		foreach (UpgradeButton i in upgradeButtons) {
 			i.startSetUp ();
 			if (getGmBool (i.gmBool)) { //if gmBool gives true, that means already upgraded
@@ -28,6 +32,31 @@ public class UpgradeManager : MonoBehaviour {
 			}
 			i.toggle ("normal");
 		}
+
+
+		checkOk ();
+	}
+
+	public void checkOk() {
+		int numInteractable = 0;
+		foreach (UpgradeButton i in upgradeButtons) {
+			if (!i.interactable) {
+				numInteractable++;
+			}
+			if (i.selSelected == "selectionSelected") {
+				okButton.setUpInteractable (true);
+				return;
+			}
+		}
+
+		if (numInteractable == upgradeButtons.Length) { //if no button is interactable, that means all upgrades gotten
+			  //so make button clickable
+			  //an alternative would be to cycle through gm, optional but more direct
+			okButton.setUpInteractable (true);
+			return;
+		}
+
+		okButton.setUpInteractable (false);
 	}
 
 	public void cycleSelection(string mode, string gmBool) {
