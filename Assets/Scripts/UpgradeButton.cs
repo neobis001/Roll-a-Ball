@@ -205,6 +205,8 @@ public class UpgradeButton : MonoBehaviour {
 		setPivot ("bl");
 		movePivot ();
 		checkPivot ();
+		movePivot (); //doing move pivot again because checkPivot may have changed pivot based on where
+		  //the starting setPivot and movePivot put the description box in
 
 		Text txtHolder = GetComponentInChildren<Text> ();
 		txtHolder.text = text;
@@ -281,14 +283,12 @@ public class UpgradeButton : MonoBehaviour {
 
 
 	public void turnOnDescription() {
-		Debug.Log ("mouse enter");
 		checkPivot ();
 		movePivot ();
 		descriptionRect.gameObject.SetActive (true);
 	}
 
 	public void turnOffDescription() {
-		Debug.Log ("mouse exit");
 		descriptionRect.gameObject.SetActive (false);
 	}
 
