@@ -7,6 +7,6 @@ missileUpgrade	False
 movementUpgrade	True
 phlebotinumUpgrade	False
 quadUpgrade	True
-reactiveArmorUpgrade	False
+reactiveArmorUpgrade	True
 repairUpgrade	False
 scramblerUpgrade	False

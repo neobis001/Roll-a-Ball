@@ -6,6 +6,7 @@ public class EnemyScript : MonoBehaviour {
 	public int health = 50;
 	public GameObject missileToBeFired;
 	public float speed = 1;
+	public bool timeDestroyAllowed = true; //for testing purposes
 
 	private bool destroyedByPlayer = false;
 	private GameManager gm;
@@ -22,7 +23,7 @@ public class EnemyScript : MonoBehaviour {
 	}
 
 	void OnDestroy() {
-		if (destroyedByPlayer) {
+		if (destroyedByPlayer || timeDestroyAllowed) {
 			gm.decreaseEnemyCount ();
 		}
 	}
