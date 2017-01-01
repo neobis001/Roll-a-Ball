@@ -38,11 +38,12 @@ public class UpgradeManager : MonoBehaviour {
 		checkOk ();
 	}
 
+	/*
 	void Update() {
 		if (Input.GetKeyDown (KeyCode.Escape)) {
 			cycleSelection ("normal", "none");
 		}
-	}
+	} */
 
 	public void checkOk() {
 		int numInteractable = 0;

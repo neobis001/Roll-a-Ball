@@ -10,7 +10,7 @@ public class UpgradeButton : MonoBehaviour {
 	public string text; //for quick test purposes in Start()
 
 	private Button btn;
-	private string currentPivot;
+	private string currentPivot; //only needed with checkPivot and setPivot (and movePivot, if putting on corners of button)
 	private bool isInteractable = true;
 	private string selectionMode = "normal";
 	private UpgradeManager um;
@@ -143,6 +143,12 @@ public class UpgradeButton : MonoBehaviour {
 	*/
 
 	void movePivot() { //works if anchors are in same place
+		//description on top doesn't work with scrollbars specifically, even wit RaycastTarget off
+		/*
+		descriptionRect.anchoredPosition = btn.GetComponent<RectTransform>().anchoredPosition; //with ability to set
+		  //Raycast Target, can put description on top of button again
+		*/
+
 		RectTransform btnRect = btn.GetComponent<RectTransform>();  
 		int btnWidthAdd = (int) (btnRect.rect.width / 2) + 2; //2 pixels extra padding
 		int btnHeightAdd = (int) (btnRect.rect.height / 2) + 2;
@@ -172,7 +178,6 @@ public class UpgradeButton : MonoBehaviour {
 		}
 
 		descriptionRect.anchoredPosition = newPos;
-		
 	}
 		
 

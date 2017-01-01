@@ -1,7 +1,7 @@
 aimUpgrade	True
 autoReloadUpgrade	True
 cyclopsUpgrade	False
-fieldUpgrade	False
+fieldUpgrade	True
 jetPackUpgrade	True
 missileUpgrade	False
 movementUpgrade	True

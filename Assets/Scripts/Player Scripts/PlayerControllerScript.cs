@@ -25,8 +25,6 @@ public class PlayerControllerScript: MonoBehaviour {
 	private bool aimUpgrade = false; //grabs from gm, this is okay extra
 	public GameObject autoTarget = null; //for telling OnGUI whether to draw auto crosshair or not
 	//needs to be GameObject to change hit2 GameObject to enemy GameObject instead of default point
-	private bool reactiveArmor = false; //grabs from gm
-	  //it's extra, but that's okay
 	private GameObject currentDefense;
 	private GameObject currentweapon;
 	private PlayerWeaponScript currentWeaponScript; 
@@ -37,7 +35,10 @@ public class PlayerControllerScript: MonoBehaviour {
 	private bool groundContact = false;
 	private int h = 128; //crosshair height, shared with autoaim cursor for now
 	private PlayerJPHolderScript jPHolder;
+	private bool menuIsOn = false;
 	private Vector2 mouse; 
+	private bool reactiveArmor = false; //grabs from gm
+	//it's extra, but that's okay
 	private Rigidbody rb;
 	private bool successfulFire = false; //for checking whether it actually fired, for field delay purposes
 	private int w = 128; //crosshair width
@@ -103,6 +104,10 @@ public class PlayerControllerScript: MonoBehaviour {
 
 	void Update ()
 	{
+		if (menuIsOn) {
+			return;
+		}
+
 		mouse = new Vector2(Input.mousePosition.x, Screen.height - Input.mousePosition.y); 	//move crosshair
 		RaycastHit hit; //point weapon as needed
 
@@ -244,6 +249,10 @@ public class PlayerControllerScript: MonoBehaviour {
 
 	//draws the crosshair that replaces the mouse on screen
 	void OnGUI() {
+		if (menuIsOn) {
+			return;
+		}
+
 		GUI.DrawTexture(new Rect(mouse.x - (w / 2), mouse.y - (h / 2), w, h), t2d);
 
 		if (autoTarget != null) { 
@@ -534,6 +543,17 @@ public class PlayerControllerScript: MonoBehaviour {
 	public bool gContact {
 		get { return groundContact; }
 		set { groundContact = value; }
+	}
+
+	public bool menuOn {
+		get { return menuIsOn; }
+		set { menuIsOn = value; 
+			if (menuIsOn) {
+				Cursor.visible = true;
+			} else {
+				Cursor.visible = false;
+			}
+		}
 	}
 
 	public Rigidbody rbProp { //made property so jet pack script can access it
