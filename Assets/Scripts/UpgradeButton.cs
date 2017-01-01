@@ -15,6 +15,39 @@ public class UpgradeButton : MonoBehaviour {
 	private string selectionMode = "normal";
 	private UpgradeManager um;
 
+	void centerPivot() {
+		movePivot ();
+
+		Vector2 refPos = new Vector2();
+		refPos += descriptionRect.anchoredPosition;
+		Vector2 screenPos = descriptionRect.anchorMin; //anchorMax is the same if anchor is a point
+		float screenWidth = um.cs.referenceResolution.x;
+		float screenHeight = um.cs.referenceResolution.y;
+		float halfWidth = screenWidth / 2;
+		float halfHeight = screenHeight / 2;
+		screenPos.x *= screenWidth; //screen sizes vary, which is why Screen.width and height didn't work for a check like this
+		//regardless of the screen res, the reference res and rect transforms stay the same, so use reference res
+		screenPos.y *= screenHeight;
+		refPos += screenPos;
+
+		if (refPos.x < halfWidth && refPos.y < halfHeight) {
+			setPivot ("bl");
+		} else if (refPos.x < halfWidth && refPos.y >= halfHeight) {
+			setPivot ("tl");
+		} else if (refPos.x >= halfWidth && refPos.y >= halfHeight) {
+			setPivot ("tr");
+		} else if (refPos.x >= halfWidth && refPos.y < halfHeight) {
+			setPivot ("br");
+		} else {
+			Debug.LogWarning ("centerPivot() didn't read anything for button " + gameObject.name);
+		}
+
+		movePivot ();
+
+	}
+
+	//centerPivot seems more useful than checkPivot, but coding this was interesting, so I want to keep it here
+	/*
 	void checkPivot() { //assumes pivot is already placed in bubble location
 		//bl check, checking br
 		bool clippedTopDown = false;
@@ -82,14 +115,14 @@ public class UpgradeButton : MonoBehaviour {
 			} 
 		} else if (side == "top") {
 			refPos.y += descriptionRect.rect.height;
-			if (refPos.y > Screen.height) {
+			if (refPos.y > um.cs.referenceResolution.y) {
 				return true;
 			} else {
 				return false;
 			}
 		} else if (side == "right") {
 			refPos.x += descriptionRect.rect.width;
-			if (refPos.x > Screen.width) {
+			if (refPos.x > um.cs.referenceResolution.x) {
 				return true;
 			} else {
 				return false;
@@ -107,6 +140,7 @@ public class UpgradeButton : MonoBehaviour {
 		}
 
 	}
+	*/
 
 	void movePivot() { //works if anchors are in same place
 		RectTransform btnRect = btn.GetComponent<RectTransform>();  
@@ -172,11 +206,12 @@ public class UpgradeButton : MonoBehaviour {
 		btn = GetComponent<Button> (); 
 		descriptionRect.gameObject.SetActive (false);
 		setPivot ("bl");
-		movePivot ();
+/*		movePivot ();
 		checkPivot ();
 		movePivot (); //doing move pivot again because checkPivot may have changed pivot based on where
 		  //the starting setPivot and movePivot put the description box in
-
+*/
+		centerPivot ();
 		Text txtHolder = GetComponentInChildren<Text> ();
 		txtHolder.text = text;
 	}
@@ -247,15 +282,17 @@ public class UpgradeButton : MonoBehaviour {
 		Debug.Log ("ancheroed position is " + descriptionRect.anchoredPosition);
 		Debug.Log ("rect position is " + descriptionRect.rect.x.ToString() + " " + descriptionRect.rect.y.ToString());
 		*/
-		checkPivot ();
+		//checkPivot ();
+		centerPivot();
 	}
 
 
 	public void turnOnDescription() {
-		movePivot (); //because descriptionRect doesn't move automatically with button
+/*		movePivot (); //because descriptionRect doesn't move automatically with button
 		  //move pivot to button with current pivot first, then do a checkPivot check, then move pivot again if changes needed
 		checkPivot ();
-		movePivot ();
+		movePivot (); */
+		centerPivot ();
 		descriptionRect.gameObject.SetActive (true);
 	}
 

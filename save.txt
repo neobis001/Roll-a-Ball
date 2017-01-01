@@ -1,4 +1,4 @@
-aimUpgrade	False
+aimUpgrade	True
 autoReloadUpgrade	True
 cyclopsUpgrade	False
 fieldUpgrade	False
