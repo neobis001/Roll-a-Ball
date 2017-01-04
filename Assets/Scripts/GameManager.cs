@@ -104,25 +104,29 @@ public class GameManager : MonoBehaviour {
 			if (i.layer == 0) { //destroy all objects in default layer
 				Destroy (i);
 			}
-		}
-		ui.setGameOverText ();
-		ui.turnOffAllButtons ();
+		} 
+		ui.cleanUpUi (); //do this before setGameOverUi so setGameOverUi can turn on its buttons 
+		ui.setGameOverUi ();
 		Camera.main.GetComponent<CameraController> ().enabled = false;
 		Cursor.visible = true;
 	}
 
-	public void gameWon() {
+	public void gameWon() { 
 		GameObject[] oList = FindObjectsOfType<GameObject>();
 		foreach (GameObject i in oList) {
 			if (i.layer == 0) { //destroy all objects in default layer
 				Destroy (i);
 			}
 		}
+		ui.cleanUpUi ();
 		ui.setGameWonText ();
-		ui.turnOffAllButtons ();
 		pcs.enabled = false;
 		Camera.main.GetComponent<CameraController> ().enabled = false;
 		StartCoroutine (LevelOverTimer ());
+	}
+
+	public void initializeHealth(int startingHealth) {
+		ui.initializeHealth (startingHealth);
 	}
 
 	public void loadSaveFile(bool setVal = true) { //setVal should be false because when called in UpgradeManager
@@ -248,26 +252,18 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 		
-		
-	//the difference between weapons and defenses is that defenses have one more layer of scripts
-	public void populateWeaponUpgrades() {
-		foreach (GameObject i in weaponUpgradeList) {
-			PlayerWeaponScript pws = i.GetComponent<PlayerWeaponScript> ();
-			if (pws.unlocked) {
-				pcs.populateWeapon (i, pws.id); //unlike defense, need id to check quad override
-			} else {
-				pws.gameObject.SetActive (false);
-			}
-		}
-		ui.initializeWeaponList (pcs.weaponList.Length);
+	//messenger
+	public void populateDefenseUI(GameObject button, int index) {
+		ui.populateDefenseUI (button, index);
 	}
-		
+
+
 	//planned to be called from player
 	public void populateDefenseUpgrades() {
 		foreach (GameObject i in defenseUpgradeList) {
 			PlayerDefenseScript pds = i.GetComponent<PlayerDefenseScript> ();
 			if (pds.unlocked) {
-				pcs.populateDefense (i);
+				pcs.populateDefense (i, pds.keyNumber);
 			} else {
 				pds.aFlag = false; //in the case where the upgrade isn't active, it won't be affected by player on changeDefesne
 				  //changeDefense only affects aFlag on item it switches to and nothing else
@@ -276,11 +272,6 @@ public class GameManager : MonoBehaviour {
 			}
 		}
 		ui.initializeDefeneseList (pcs.defenseList.Length);
-	}
-
-	//messenger
-	public void populateDefenseUI(GameObject button) {
-		ui.populateDefenseUI (button);
 	}
 
 	//messenger
@@ -293,13 +284,31 @@ public class GameManager : MonoBehaviour {
 		ui.populateWeaponUI (button);
 	}
 
+	//the difference between weapons and defenses is that defenses have one more layer of scripts
+	public void populateWeaponUpgrades() {
+		foreach (GameObject i in weaponUpgradeList) {
+			PlayerWeaponScript pws = i.GetComponent<PlayerWeaponScript> ();
+			if (pws.unlocked) {
+				pcs.populateWeapon (i, pws.id); //unlike defense, need id to check quad override
+			} else {
+				pws.gameObject.SetActive (false);
+			}
+		}
+		ui.initializeWeaponList (pcs.weaponList.Length);
+	}
+
+
+	public void setAmmoReload(string txt, bool doneReloading) {
+		ui.setAmmoReload (txt, doneReloading);
+	}
+
 	//messenger
 	public void setAmmoText(string txt) {
 		ui.setAmmoText (txt);
 	}
 		
-	public void setHealthText(string hlth) {
-		ui.setHealthText (hlth);
+	public void setHealth(int hlth) {
+		ui.setHealth (hlth);
 	}
 
 	//to access scramblerFlag

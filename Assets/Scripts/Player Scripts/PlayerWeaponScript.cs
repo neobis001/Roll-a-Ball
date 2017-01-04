@@ -45,11 +45,11 @@ public class PlayerWeaponScript : PlayerItemScript {
 	IEnumerator Reload() {
 		isReloading = true;
 		reloadSound.Play ();
-		gm.setAmmoText ("Reloading...");
+		gm.setAmmoReload (ammo.ToString(), doneReloading: false);
 		yield return new WaitForSeconds (reloadTime);
 		isReloading = false;
 		ammo = initialAmmo;
-		gm.setAmmoText (ammo.ToString ());
+		gm.setAmmoReload (ammo.ToString (), doneReloading: true);
 	}
 
 

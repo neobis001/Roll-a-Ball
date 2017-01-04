@@ -2,13 +2,14 @@
 using System.Collections;
 
 public class PlayerDefenseScript : PlayerItemScript {
+	public int keyNumber; //what num key used to set this active
 	public PlayerControllerScript pcs;
 	//probs don't need this
 	//public string id;
 	//whether item is unlocked or not
 	//public bool unlocked = false;
 	//button to be activated on Ui if it's true
-	public GameObject button;
+	public GameObject uiObject;
 
 	private bool activeFlag = true;
 	private bool enabledFlag = true;

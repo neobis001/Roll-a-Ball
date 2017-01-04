@@ -4,17 +4,21 @@ using System.Collections;
 
 //12/31/16 setup is currently handled by UpgradeManager because Start() order caused some oddities
 public class UpgradeButton : MonoBehaviour {
+	public RectTransform centerDisplay;
 	public RectTransform descriptionRect;
 	public string gmBool; //string saying what boolean in gm button is connected to
 	  //like an id too for cycling selectionMode
 	public string text; //for quick test purposes in Start()
 
 	private Button btn;
+	private RectTransform centerDisplayReference;
 	private string currentPivot; //only needed with checkPivot and setPivot (and movePivot, if putting on corners of button)
 	private bool isInteractable = true;
+	private RectTransform descriptionReference;
 	private string selectionMode = "normal";
 	private UpgradeManager um;
 
+	/*
 	void centerPivot() {
 		movePivot ();
 
@@ -44,7 +48,7 @@ public class UpgradeButton : MonoBehaviour {
 
 		movePivot ();
 
-	}
+	} */
 
 	//centerPivot seems more useful than checkPivot, but coding this was interesting, so I want to keep it here
 	/*
@@ -142,6 +146,14 @@ public class UpgradeButton : MonoBehaviour {
 	}
 	*/
 
+	void blCornerPivot() {
+		setPivot ("bl"); 
+		descriptionRect.anchorMin = new Vector2 ();
+		descriptionRect.anchorMax = new Vector2 ();
+
+		descriptionRect.anchoredPosition = descriptionReference.anchoredPosition;
+	}
+
 	void movePivot() { //works if anchors are in same place
 		//description on top doesn't work with scrollbars specifically, even wit RaycastTarget off
 		/*
@@ -210,18 +222,30 @@ public class UpgradeButton : MonoBehaviour {
 		um = GameObject.FindGameObjectWithTag ("UpgradeManager").GetComponent<UpgradeManager>();
 		btn = GetComponent<Button> (); 
 		descriptionRect.gameObject.SetActive (false);
-		setPivot ("bl");
+		//setPivot ("bl");
+
+		centerDisplay.gameObject.SetActive (false);
+		centerDisplayReference = GameObject.FindGameObjectWithTag ("CenterDisplay").GetComponent<RectTransform>();
+		descriptionReference = GameObject.FindGameObjectWithTag ("Description").GetComponent<RectTransform> ();
+
 /*		movePivot ();
 		checkPivot ();
 		movePivot (); //doing move pivot again because checkPivot may have changed pivot based on where
 		  //the starting setPivot and movePivot put the description box in
 */
-		centerPivot ();
-		Text txtHolder = GetComponentInChildren<Text> ();
-		txtHolder.text = text;
+		//centerPivot ();
+
+		blCornerPivot ();
+
+		/*Text txtHolder = GetComponentInChildren<Text> ();
+		txtHolder.text = text; */
 	}
 
 	public void setUpInteractable(bool isOn) {
+		ColorBlock cb = btn.colors;
+		cb.disabledColor = um.notInteractableC;
+		btn.colors = cb;
+
 		if (isOn) {
 			btn.interactable = true;
 			isInteractable = true;
@@ -245,7 +269,6 @@ public class UpgradeButton : MonoBehaviour {
 			cb.pressedColor = um.originalNormalC;
 			btn.colors = cb;
 			selectionMode = "normal";
-
 		} else if (mode == "selectionSelected") {
 			cb.normalColor = um.selectionSelectedC;
 			cb.highlightedColor = um.selectionSelectedC;
@@ -288,7 +311,7 @@ public class UpgradeButton : MonoBehaviour {
 		Debug.Log ("rect position is " + descriptionRect.rect.x.ToString() + " " + descriptionRect.rect.y.ToString());
 		*/
 		//checkPivot ();
-		centerPivot();
+		//centerPivot();
 	}
 
 
@@ -297,11 +320,19 @@ public class UpgradeButton : MonoBehaviour {
 		  //move pivot to button with current pivot first, then do a checkPivot check, then move pivot again if changes needed
 		checkPivot ();
 		movePivot (); */
-		centerPivot ();
+		centerDisplay.gameObject.SetActive (true);
+		centerDisplay.anchoredPosition = centerDisplayReference.anchoredPosition;
+		centerDisplay.sizeDelta = centerDisplayReference.sizeDelta;
+
+		//centerPivot ();
+
+		blCornerPivot ();
 		descriptionRect.gameObject.SetActive (true);
 	}
 
 	public void turnOffDescription() {
+		centerDisplay.gameObject.SetActive (false);
+
 		descriptionRect.gameObject.SetActive (false);
 	}
 

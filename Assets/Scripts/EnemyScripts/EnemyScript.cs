@@ -6,15 +6,15 @@ public class EnemyScript : MonoBehaviour {
 	public int health = 50;
 	public GameObject missileToBeFired;
 	public float speed = 1;
-	public bool timeDestroyAllowed = true; //for testing purposes
+	public bool timerDestroy = false; //for testing purposes
 
 	private bool destroyedByPlayer = false;
 	private GameManager gm;
 
 	void Start() {
-		Destroy (gameObject, 10);
 		gm = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameManager> ();
 		StartCoroutine (Timer ());
+		StartCoroutine (DestroyTimer ());
 	}
 
 	// Update is called once per frame
@@ -23,7 +23,7 @@ public class EnemyScript : MonoBehaviour {
 	}
 
 	void OnDestroy() {
-		if (destroyedByPlayer || timeDestroyAllowed) {
+		if (destroyedByPlayer || timerDestroy) {
 			gm.decreaseEnemyCount ();
 		}
 	}
@@ -35,6 +35,12 @@ public class EnemyScript : MonoBehaviour {
 			Destroy (gameObject);
 			destroyedByPlayer = true;
 		}
+	}
+
+	IEnumerator DestroyTimer() {
+		yield return new WaitForSeconds (10);
+		timerDestroy = true;
+		Destroy (gameObject);
 	}
 
 	IEnumerator Timer() {

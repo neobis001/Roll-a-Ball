@@ -97,7 +97,7 @@ public class PlayerControllerScript: MonoBehaviour {
 		changeWeapon (0); //switch items early
 		changeDefense (0);
 		gm.setAmmoText (currentWeaponScript.ammo.ToString ()); //update text early
-		gm.setHealthText (health.ToString ());
+		gm.initializeHealth(health);
 
 	}
 
@@ -247,6 +247,10 @@ public class PlayerControllerScript: MonoBehaviour {
 		}
 	} */
 
+	void OnDestroy() {
+		Cursor.visible = true;
+	}
+
 	//draws the crosshair that replaces the mouse on screen
 	void OnGUI() {
 		if (menuIsOn) {
@@ -264,15 +268,7 @@ public class PlayerControllerScript: MonoBehaviour {
 			GUI.DrawTexture (new Rect (drawLocation.x - (w / 2), drawY - (h / 2), w, h), auto2d);
 		}
 	}
-
-	//send ammo status for gm to use with ui
-	void sendHealthAndAmmoData() {
-		if (currentWeaponScript.ammo == 0) {
-			gm.setAmmoText ("RELOAD");
-		} else {
-			gm.setAmmoText (currentWeaponScript.ammo.ToString ());
-		}
-	}
+		
 
 	//return earliest defenseIndex available to switch too, cycling via cycleDirection
 	//else return -1 to say no indices available
@@ -295,12 +291,20 @@ public class PlayerControllerScript: MonoBehaviour {
 	//by default, all buttons are disabled
 	//so send button list for UI to place 	
 	void populateDefenseUI() {
-		foreach (GameObject i in defenseList) {
+		/*foreach (GameObject i in defenseList) {
 			if (i) {
 				PlayerDefenseScript pds = i.GetComponent<PlayerDefenseScript> ();
-				gm.populateDefenseUI (pds.button);
+				gm.populateDefenseUI (pds.uiObject);
 			}
-		}	
+		} */
+
+		for (int i = 0; i < defenseList.Length; i++) {
+			if (defenseList [i]) {
+				PlayerDefenseScript pds = defenseList [i].GetComponent<PlayerDefenseScript> ();
+				gm.populateDefenseUI (pds.uiObject, pds.keyNumber);
+			}
+		}
+
 	}
 
 	void populateJetUI() {
@@ -314,6 +318,16 @@ public class PlayerControllerScript: MonoBehaviour {
 				gm.populateWeaponUI(pws.button);
 			}
 		}
+	}
+
+	//send ammo status for gm to use with ui
+	void sendHealthAndAmmoData() {
+		/*if (currentWeaponScript.ammo == 0) {
+			gm.setAmmoText ("RELOAD");
+		} else {
+			gm.setAmmoText (currentWeaponScript.ammo.ToString ());
+		} */
+		gm.setAmmoText (currentWeaponScript.ammo.ToString ());
 	}
 
 	public void changeDefense(int index) {
@@ -348,6 +362,8 @@ public class PlayerControllerScript: MonoBehaviour {
 				} else {
 					indices [i] = "activeEnabled";
 				}
+			} else {
+				indices [i] = "nothing";
 			}
 		}
 
@@ -356,14 +372,19 @@ public class PlayerControllerScript: MonoBehaviour {
 	}
 
 	public void changeHealth(int hlth) {
-		float voi = (float)hlth;
+
+		float voi = (float) hlth;
 		if (reactiveArmor) {
 			health += (int) ((1 - armorDamageDrop / 100f) * voi);
 		} else {
 			health += (int) voi; //change health and update ui as needed
 		}
 
-		gm.setHealthText (health.ToString());
+		if (health > 100) {
+			health = 100;
+		}
+
+		gm.setHealth (health);
 
 		if (health <= 0) {
 			gm.gameOver (); 
@@ -399,13 +420,14 @@ public class PlayerControllerScript: MonoBehaviour {
 		}
 	}
 
-	public void populateDefense(GameObject go) {
-		for (int i = 0; i < defenseList.Length; i++) {
+	public void populateDefense(GameObject go, int key) { //for now, key press is a number that corresponds to index
+		/*for (int i = 0; i < defenseList.Length; i++) {
 			if (!defenseList [i]) {
 				defenseList [i] = go;
 				break;
 			}
-		}
+		} */
+		defenseList [key - 1] = go; //keys start at 1, so subtract 1 to start at index 0
 	}
 
 	public void populateWeapon(GameObject go, string id) {
