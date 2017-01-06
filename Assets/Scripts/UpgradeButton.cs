@@ -5,16 +5,20 @@ using System.Collections;
 //12/31/16 setup is currently handled by UpgradeManager because Start() order caused some oddities
 public class UpgradeButton : MonoBehaviour {
 	public RectTransform centerDisplay;
-	public RectTransform descriptionRect;
+	public string descriptionMain;
+	public string descriptionStats;
+	public string descriptionTitle;
+	public string descriptionType;
+	//public RectTransform descriptionRect;
 	public string gmBool; //string saying what boolean in gm button is connected to
 	  //like an id too for cycling selectionMode
 	public string text; //for quick test purposes in Start()
 
 	private Button btn;
 	private RectTransform centerDisplayReference;
-	private string currentPivot; //only needed with checkPivot and setPivot (and movePivot, if putting on corners of button)
+	//private string currentPivot; //only needed with checkPivot and setPivot (and movePivot, if putting on corners of button)
 	private bool isInteractable = true;
-	private RectTransform descriptionReference;
+	//private RectTransform descriptionReference;
 	private string selectionMode = "normal";
 	private UpgradeManager um;
 
@@ -146,6 +150,7 @@ public class UpgradeButton : MonoBehaviour {
 	}
 	*/
 
+	/*
 	void blCornerPivot() {
 		setPivot ("bl"); 
 		descriptionRect.anchorMin = new Vector2 ();
@@ -153,13 +158,15 @@ public class UpgradeButton : MonoBehaviour {
 
 		descriptionRect.anchoredPosition = descriptionReference.anchoredPosition;
 	}
+	*/
 
+	/*
 	void movePivot() { //works if anchors are in same place
 		//description on top doesn't work with scrollbars specifically, even wit RaycastTarget off
-		/*
-		descriptionRect.anchoredPosition = btn.GetComponent<RectTransform>().anchoredPosition; //with ability to set
+
+		//descriptionRect.anchoredPosition = btn.GetComponent<RectTransform>().anchoredPosition; //with ability to set
 		  //Raycast Target, can put description on top of button again
-		*/
+
 
 		RectTransform btnRect = btn.GetComponent<RectTransform>();  
 		int btnWidthAdd = (int) (btnRect.rect.width / 2) + 2; //2 pixels extra padding
@@ -189,10 +196,12 @@ public class UpgradeButton : MonoBehaviour {
 			break;
 		}
 
-		descriptionRect.anchoredPosition = newPos;
+		//descriptionRect.anchoredPosition = newPos;
 	}
+	*/
 		
 
+	/*
 	void setPivot(string pivot) { //tl,bl,tr,br = top left, bottom left, top right, bottom right
 			//changing a pivot should move box as needed 
 
@@ -215,27 +224,28 @@ public class UpgradeButton : MonoBehaviour {
 		}
 
 		currentPivot = pivot;
-	}
+	} */
 		
 	public void startSetUp() { //apparently, setUpInteractable runs before button is gotten
 		  //oddly specifically on scene transition from level to upgrade scene, have UpgradeManager handle setup here
 		um = GameObject.FindGameObjectWithTag ("UpgradeManager").GetComponent<UpgradeManager>();
 		btn = GetComponent<Button> (); 
-		descriptionRect.gameObject.SetActive (false);
+
+		//descriptionRect.gameObject.SetActive (false);
 		//setPivot ("bl");
+		//blCornerPivot ();
 
 		centerDisplay.gameObject.SetActive (false);
 		centerDisplayReference = GameObject.FindGameObjectWithTag ("CenterDisplay").GetComponent<RectTransform>();
-		descriptionReference = GameObject.FindGameObjectWithTag ("Description").GetComponent<RectTransform> ();
+		//descriptionReference = GameObject.FindGameObjectWithTag ("Description").GetComponent<RectTransform> ();
 
 /*		movePivot ();
 		checkPivot ();
 		movePivot (); //doing move pivot again because checkPivot may have changed pivot based on where
 		  //the starting setPivot and movePivot put the description box in
 */
-		//centerPivot ();
 
-		blCornerPivot ();
+		//centerPivot ();
 
 		/*Text txtHolder = GetComponentInChildren<Text> ();
 		txtHolder.text = text; */
@@ -306,34 +316,42 @@ public class UpgradeButton : MonoBehaviour {
 		Debug.Log ("rect.height is " + descriptionRect.rect.height.ToString ());
 		Debug.Log("sizeDelta.x.ToString " + descriptionRect.sizeDelta.x.ToString());
 		Debug.Log ("sizeDelta.y.ToString " + descriptionRect.sizeDelta.y.ToString ());*/
+
 		/*
 		Debug.Log ("ancheroed position is " + descriptionRect.anchoredPosition);
 		Debug.Log ("rect position is " + descriptionRect.rect.x.ToString() + " " + descriptionRect.rect.y.ToString());
 		*/
+
 		//checkPivot ();
 		//centerPivot();
+
+		um.playToggle ();
 	}
-
-
+		
 	public void turnOnDescription() {
-/*		movePivot (); //because descriptionRect doesn't move automatically with button
+		//movePivot (); //because descriptionRect doesn't move automatically with button
 		  //move pivot to button with current pivot first, then do a checkPivot check, then move pivot again if changes needed
-		checkPivot ();
-		movePivot (); */
-		centerDisplay.gameObject.SetActive (true);
-		centerDisplay.anchoredPosition = centerDisplayReference.anchoredPosition;
-		centerDisplay.sizeDelta = centerDisplayReference.sizeDelta;
+		//checkPivot ();
+		//movePivot ();
 
 		//centerPivot ();
 
-		blCornerPivot ();
-		descriptionRect.gameObject.SetActive (true);
+		//blCornerPivot ();
+
+		//descriptionRect.gameObject.SetActive (true);
+
+		centerDisplay.gameObject.SetActive (true);
+		centerDisplay.anchoredPosition = centerDisplayReference.anchoredPosition;
+		centerDisplay.sizeDelta = centerDisplayReference.sizeDelta;
+		um.turnOnDescription (descriptionTitle, descriptionType, descriptionStats, descriptionMain);
+		um.playHover ();
 	}
 
 	public void turnOffDescription() {
-		centerDisplay.gameObject.SetActive (false);
+		//descriptionRect.gameObject.SetActive (false);
 
-		descriptionRect.gameObject.SetActive (false);
+		centerDisplay.gameObject.SetActive (false);
+		um.turnOffDescription ();
 	}
 
 	public bool interactable{

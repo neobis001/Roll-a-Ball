@@ -21,8 +21,10 @@ public class PlayerRepairKitScript : PlayerDefenseScript {
 	void Update () {
 		transform.position = pcs.transform.position; //don't need this, just doing it for consistencey with scrambler
 		if (aFlag && !delay && Input.GetMouseButtonDown (1)) {
-			Instantiate (repairPrefab, pcs.transform.position, Quaternion.identity);
-			StartCoroutine (DelayDisable ());
+			if (pcs.gContact) {
+				Instantiate (repairPrefab, pcs.transform.position, Quaternion.identity);
+				StartCoroutine (DelayDisable ());
+			}
 		}
 	}
 }

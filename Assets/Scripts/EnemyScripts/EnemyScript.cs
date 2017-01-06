@@ -6,10 +6,10 @@ public class EnemyScript : MonoBehaviour {
 	public int health = 50;
 	public GameObject missileToBeFired;
 	public float speed = 1;
-	public bool timerDestroy = false; //for testing purposes
 
 	private bool destroyedByPlayer = false;
 	private GameManager gm;
+	private bool timerDestroy = false; //for testing purposes
 
 	void Start() {
 		gm = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameManager> ();

@@ -6,6 +6,13 @@ using System.IO;
 public class UpgradeManager : MonoBehaviour {
 
 	public CanvasScaler cs;
+	public GameObject[] descriptionImages;
+	public Text descriptionMain;
+	public Text descriptionStats;
+	public Text descriptionTitle;
+	public Text descriptionType;
+	public AudioSource hoverSound;
+	public AudioSource toggleSound;
 	public OkScript okButton;
 	public Color originalNormalC; //plan is to make normal and highlighted color the same
 	//whether toggled on or off 
@@ -22,7 +29,8 @@ public class UpgradeManager : MonoBehaviour {
 		gm = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameManager> ();
 		gm.loadSaveFile (setVal: false);
 		okButton.setUpButton (); //done here before checkOk()
-
+		turnOffDescription();
+		
 		foreach (UpgradeButton i in upgradeButtons) {
 			i.startSetUp ();
 			if (getGmBool (i.gmBool)) { //if gmBool gives true, that means already upgraded
@@ -119,6 +127,35 @@ public class UpgradeManager : MonoBehaviour {
 			break;
 		}
 		return res;
+	}
+
+	public void playHover() {
+		hoverSound.Play ();
+	}
+
+	public void playToggle() {
+		toggleSound.Play ();
+	}
+
+	public void turnOffDescription() {
+		foreach (GameObject i in descriptionImages) {
+			i.SetActive (false);
+		}
+		descriptionTitle.text = "";
+		descriptionType.text = "";
+		descriptionStats.text = "";
+		descriptionMain.text = "";
+	}
+
+	public void turnOnDescription(string title, string type, string stats, string main) {
+		foreach (GameObject i in descriptionImages) {
+			i.SetActive (true);
+		}
+		descriptionTitle.text = title;
+		descriptionType.text = type;
+		descriptionStats.text = stats;
+		descriptionMain.text = main;
+
 	}
 
 	public void writeGmBool() {

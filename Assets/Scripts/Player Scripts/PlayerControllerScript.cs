@@ -31,6 +31,8 @@ public class PlayerControllerScript: MonoBehaviour {
 /*	public Vector3 autoTarget = new Vector3(-10000, -10000,-10000); //for telling OnGUI whether to draw auto crosshair or not
 	  //making default value this to act like false bool value */
 	private bool fieldFrozen = false; //for when field starts and to prevent jet pack from running
+	private int frozenCount = 0; //a counter to keep track of what upgrades (repair kit and force field so far) freeze rb
+	  //so if both timers overlap, when one stops, player still has to wait for other timer to finish to go again
 	private GameManager gm;
 	private bool groundContact = false;
 	private int h = 128; //crosshair height, shared with autoaim cursor for now
@@ -95,7 +97,14 @@ public class PlayerControllerScript: MonoBehaviour {
 		lm = LayerMask.GetMask(layerStrings);
 
 		changeWeapon (0); //switch items early
-		changeDefense (0);
+		  //don't need for loop check, assuming 0 index is always occupied by default cannon
+		for (int i = 0; i < defenseList.Length; i++) {
+			if (defenseList [i]) {
+				changeDefense (i);
+				break;
+			}
+		}
+
 		gm.setAmmoText (currentWeaponScript.ammo.ToString ()); //update text early
 		gm.initializeHealth(health);
 
@@ -414,9 +423,15 @@ public class PlayerControllerScript: MonoBehaviour {
 		if (freeze) {
 			rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
 			fieldFrozen = true;
+			frozenCount++;
 		} else {
-			rb.constraints = RigidbodyConstraints.None;
-			fieldFrozen = false;
+			frozenCount--;
+
+			if (frozenCount == 0) {
+				rb.constraints = RigidbodyConstraints.None;
+				fieldFrozen = false;
+			}
+
 		}
 	}
 

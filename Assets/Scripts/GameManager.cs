@@ -26,6 +26,8 @@ public class GameManager : MonoBehaviour {
 	public GameObject[] weaponUpgradeList;
 
 	private int enemyCount = 0;
+	private bool levelDone = false; //bool so that menu can't show up (so that player doesn't quit on level complete and have to do level
+	  //all over again
 	private bool scramblerFlag = false; //for scrambler
 
 	void Start () {
@@ -122,6 +124,7 @@ public class GameManager : MonoBehaviour {
 		ui.setGameWonText ();
 		pcs.enabled = false;
 		Camera.main.GetComponent<CameraController> ().enabled = false;
+		levelDone = true;
 		StartCoroutine (LevelOverTimer ());
 	}
 
@@ -309,6 +312,10 @@ public class GameManager : MonoBehaviour {
 		
 	public void setHealth(int hlth) {
 		ui.setHealth (hlth);
+	}
+
+	public bool lDone {
+		get { return levelDone; }
 	}
 
 	//to access scramblerFlag

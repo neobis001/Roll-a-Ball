@@ -218,7 +218,11 @@ public class UIScript : MonoBehaviour {
 	public void cleanUpUi() { //most images in UI
 		Image[] blist = GetComponentsInChildren<Image> (); //assumes script is in parent that carries button children
 		foreach (Image i in blist) {
-			i.gameObject.SetActive (false);
+			if (i.gameObject.CompareTag ("MenuButton") || i.gameObject.CompareTag ("MenuImage")) {
+				continue; 
+			} else {
+				i.gameObject.SetActive (false);
+			}
 		}
 	}
 

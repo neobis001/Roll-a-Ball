@@ -31,7 +31,7 @@ public class PlayerFieldInstanceScript : MonoBehaviour {
 			yield return new WaitForEndOfFrame ();
 			delayElapsed += Time.deltaTime;
 		}
-		Destroy (gameObject);
 		pcs.freezeOnGround (false);
+		Destroy (gameObject);
 	}
 }

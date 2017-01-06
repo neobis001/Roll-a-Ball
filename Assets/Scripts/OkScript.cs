@@ -4,6 +4,7 @@ using System.Collections;
 using UnityEngine.SceneManagement;
 
 public class OkScript : MonoBehaviour {
+	public AudioSource selectSound;
 
 	private Button btn;
 	private GameManager gm;
@@ -27,6 +28,8 @@ public class OkScript : MonoBehaviour {
 	}
 
 	public void toNextScene() {
+		selectSound.Play ();
+
 		if (gm.nextScene == "exit") { //for testing purposes
 			Application.Quit ();
 		} else if (gm.nextScene == "write") {
@@ -36,6 +39,7 @@ public class OkScript : MonoBehaviour {
 			um.writeGmBool ();
 			SceneManager.LoadScene (gm.nextScene);
 		}
+
 	}
 
 }

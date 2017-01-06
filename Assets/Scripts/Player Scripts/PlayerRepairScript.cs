@@ -21,12 +21,15 @@ public class PlayerRepairScript : MonoBehaviour{
 	//increase health every second until lifeTime reached
 	IEnumerator Timer() {
 		int timeCounter = 0;
+		pcs.freezeOnGround (true);
+
 		while (timeCounter < lifeTime) {
 			yield return new WaitForSeconds (1);
 			pcs.changeHealth ((int)(percentIncrease * pcs.health));
 			timeCounter++;
 		}
 		//GetComponent<AudioSource> ().Stop ();
+		pcs.freezeOnGround(false);
 		Destroy (gameObject);
 	}
 

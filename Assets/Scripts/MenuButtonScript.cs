@@ -5,6 +5,8 @@ using UnityEngine.EventSystems;
 
 public class MenuButtonScript : MonoBehaviour {
 
+	public AudioSource selectSound; //grab from prefab
+
 	private MenuScript ms;
 	private string currentScene;
 
@@ -15,15 +17,18 @@ public class MenuButtonScript : MonoBehaviour {
 
 	public void continueGame() {
 		ms.toggleMenu (false);
+		selectSound.Play ();
 	}
 
 	public void quitGame() {
 		Debug.Log ("loading2");
+		selectSound.Play ();
 		Application.Quit ();
 	}
 
 	public void restartLevel() {
 		Debug.Log ("loading");
+		selectSound.Play ();
 		SceneManager.LoadScene (currentScene);
 	}
 		

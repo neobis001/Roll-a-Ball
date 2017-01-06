@@ -1,10 +1,12 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections;
 
 public class MenuScript : MonoBehaviour {
 	public AudioSource menuMusic;
 	public GameObject[] menuObjects;
 
+	private GameManager gm;
 	private bool menuIsOn;
 	private PlayerControllerScript pcs = null;
 	private AudioSource sceneMusic;
@@ -15,6 +17,7 @@ public class MenuScript : MonoBehaviour {
 		if (player) {
 			pcs = player.GetComponent<PlayerControllerScript> ();
 		}
+		gm = GameObject.FindGameObjectWithTag ("GameManager").GetComponent<GameManager> ();
 		sceneMusic = GameObject.FindGameObjectWithTag ("MainCamera").GetComponent<AudioSource> ();
 		toggleMenu (false);
 
@@ -28,9 +31,19 @@ public class MenuScript : MonoBehaviour {
 	}
 
 	public void toggleMenu(bool turnOn) {
+		if (gm.lDone) { //if level done, prevent menu from showing up
+			return;
+		}
+
 		if (turnOn) {
 			foreach (GameObject i in menuObjects) {
-				i.SetActive (true);
+				if (i.CompareTag ("MenuImage")) {
+					i.GetComponent<Image> ().enabled = true;
+				} else if (i.CompareTag ("MenuButton")) {
+					i.GetComponent<Image> ().enabled = true;
+					i.GetComponent<Button> ().enabled = true;
+					i.GetComponentInChildren<Text> ().enabled = true;
+				}
 			}
 			Time.timeScale = 0;
 			menuMusic.Play ();
@@ -43,7 +56,13 @@ public class MenuScript : MonoBehaviour {
 
 		} else {
 			foreach (GameObject i in menuObjects) {
-				i.SetActive (false);
+				if (i.CompareTag ("MenuImage")) {
+					i.GetComponent<Image> ().enabled = false;
+				} else if (i.CompareTag ("MenuButton")) {
+					i.GetComponent<Image> ().enabled = false;
+					i.GetComponent<Button> ().enabled = false;
+					i.GetComponentInChildren<Text> ().enabled = false;
+				}
 			}
 			Time.timeScale = 1;
 			menuMusic.Stop ();
