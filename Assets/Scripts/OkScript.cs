@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using System.Collections;
+using System.IO;
 using UnityEngine.SceneManagement;
 
 public class OkScript : MonoBehaviour {
@@ -34,9 +35,10 @@ public class OkScript : MonoBehaviour {
 			Application.Quit ();
 		} else if (gm.nextScene == "write") {
 			um.writeGmBool ();
-			Debug.Log ("wrote to save.txt");
+			Debug.Log ("wrote to saveStats.txt");
 		} else {
 			um.writeGmBool ();
+			File.WriteAllText ("saveLocation.txt", gm.nextScene);
 			SceneManager.LoadScene (gm.nextScene);
 		}
 

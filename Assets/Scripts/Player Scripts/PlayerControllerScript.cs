@@ -55,7 +55,7 @@ public class PlayerControllerScript: MonoBehaviour {
 		Cursor.visible = false; //cursor
 		GameObject gmObject = GameObject.FindGameObjectWithTag ("GameManager"); //gm stuff
 		gm = gmObject.GetComponent<GameManager>();
-		gm.editModeItemLoad (); //for edit mode only when not loading save.txt, will get overriden by loadSaveFile if its code is allowed to run
+		gm.editModeItemLoad (); //for edit mode only when not loading saveStats.txt, will get overriden by loadSaveFile if its code is allowed to run
 		gm.loadSaveFile ();
 		gm.populateWeaponUpgrades (); //populate items/ui before running code
 		populateWeaponUI ();

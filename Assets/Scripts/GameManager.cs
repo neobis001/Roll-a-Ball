@@ -31,6 +31,16 @@ public class GameManager : MonoBehaviour {
 	private bool scramblerFlag = false; //for scrambler
 
 	void Start () {
+		string currentScene = SceneManager.GetActiveScene ().name;
+
+		if (File.Exists ("saveLocation.txt")) {
+			string sceneName = File.ReadAllText ("saveLocation.txt");
+
+			if (sceneName != currentScene) {
+				SceneManager.LoadScene (sceneName);
+			} 
+		}
+
 		enemyCount = GameObject.FindGameObjectsWithTag ("Enemy").Length;
 	}
 
@@ -55,6 +65,7 @@ public class GameManager : MonoBehaviour {
 
 	IEnumerator LevelOverTimer() {
 		yield return new WaitForSeconds (levelOverTime);
+		File.WriteAllText ("saveLocation.txt", nextScene);
 		SceneManager.LoadScene (nextScene);
 	}
 
@@ -134,8 +145,8 @@ public class GameManager : MonoBehaviour {
 
 	public void loadSaveFile(bool setVal = true) { //setVal should be false because when called in UpgradeManager
 		  //there's no item to set values to, only gm bools
-		if (File.Exists ("save.txt")) {
-			string[] upList = File.ReadAllLines ("save.txt");
+		if (File.Exists ("saveStats.txt")) {
+			string[] upList = File.ReadAllLines ("saveStats.txt");
 			foreach (string i in upList) {
 				char[] tabSplit = new char[]{ '\t' };
 				string[] inpt = i.Split (tabSplit);
@@ -250,7 +261,7 @@ public class GameManager : MonoBehaviour {
 					txt += "\t" + scramblerUpgrade.ToString ();
 					break;
 				}
-				File.AppendAllText ("save.txt", txt + "\n");
+				File.AppendAllText ("saveStats.txt", txt + "\n");
 			}
 		}
 	}

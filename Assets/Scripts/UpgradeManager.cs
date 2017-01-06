@@ -175,7 +175,7 @@ public class UpgradeManager : MonoBehaviour {
 				}
 			}
 		}
-		File.WriteAllText ("save.txt", res);
+		File.WriteAllText ("saveStats.txt", res);
 	}
 
 }
